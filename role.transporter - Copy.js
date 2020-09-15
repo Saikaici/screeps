@@ -24,21 +24,21 @@ var roleTransporter= {
 
         //Initial targets for the alpha constructor
         if(creep.memory.transporting) {
-            var alphaTargets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            /*var alphaTargets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return ((structure.structureType == STRUCTURE_EXTENSION || ((structure.structureType == STRUCTURE_TOWER) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 180)) || structure.structureType == STRUCTURE_SPAWN) &&
                         structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
                 }
-            }); 
-            /*
+            }); */
+            
             var alphaTargets = creep.room.find(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return ((structure.structureType == STRUCTURE_EXTENSION || ((structure.structureType == STRUCTURE_TOWER) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 180)) || structure.structureType == STRUCTURE_SPAWN) &&
                         structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
                 }
             });
-            */
-
+            
+            console.log('alpha target target building:' + alphaTargets); 
         }
         //Grab from containers that are passed as an array of structures
         if(creep.memory.transporting == false) {  
@@ -80,8 +80,8 @@ var roleTransporter= {
                     return (((structure.structureType == STRUCTURE_STORAGE) || (structure.structureType == STRUCTURE_CONTAINER)) && (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck));
                 }
             });
-            //console.log('Gather target:' + maxEnergyCheck);
-            //console.log('Gather target:' + target);
+            console.log('Gather target:' + maxEnergyCheck);
+            console.log('Gather target:' + target);
             if(target != null) {
                 if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target.pos, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -112,13 +112,13 @@ var roleTransporter= {
         //END OF GATHERING CODE
 
 
-        else if(creep.memory.transporting && creep.memory.alphaTransporter && alphaTargets){
+        else if(creep.memory.transporting && creep.memory.alphaTransporter && (alphaTargets.length > 0)){
             //Prioritize cannon deliveries, then extenders, then spawn. Straight lifted from Harvester code.
             
             // targets are defined above
-                if(alphaTargets) {
-                    if(creep.transfer(alphaTargets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(alphaTargets, {visualizePathStyle: {stroke: '#ffffff'}});
+                if(alphaTargets.length > 0) {
+                    if(creep.transfer(alphaTargets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(alphaTargets[0], {visualizePathStyle: {stroke: '#ffffff'}});
                     }
                 }
             }

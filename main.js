@@ -143,7 +143,7 @@ module.exports.loop = function () {
             {memory: {role: 'builder'}});
     }
     
-    if(maintainers.length < 1) {
+    if(maintainers.length < 2) {
         var newName = 'Maintainer' + Game.time;
         //console.log('Spawning new maintaner: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,CARRY,MOVE,MOVE], newName, 
