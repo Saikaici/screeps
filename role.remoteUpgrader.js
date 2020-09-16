@@ -1,17 +1,11 @@
-var roleRemoteBuilder = {
+var roleRemoteUpgrader = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-		// assignedRoom should be id
-		// Need to pass 'E47N27'
+        //Goal is to 
+        // A - Go claim a room
+        // B - Mine and upgrade room controller (remote builder)
 
-        //The purpose of this builder is to
-		// A go to a different room, set an initial point because that's where we'll connect to the previous room
-		// B Set up controller with a flag
-		// B.1 set up construction sites for road between previous room and nodes in room (B.2 find nodes, B.3 set up road constructionsites)
-		// C Gather minerals
-        // D maintain those roads
-		// 
 
 		// Initialize memory.rooms if it doesn't exist
 		const assignedRoom = creep.memory.assignedRoom;
@@ -31,7 +25,6 @@ var roleRemoteBuilder = {
 			Memory.rooms[assignedRoom].roadsLaid = false;
 			Memory.rooms[assignedRoom].roadsBuilt = false;
 			Memory.rooms[assignedRoom].claimed = false;
-			Memory.rooms[assignedRoom].reserved = false;
 			Memory.rooms[assignedRoom].spawnPlaced = false;
 			Memory.rooms[assignedRoom].spawnBuilt = false;
 			Memory.rooms[assignedRoom].roomIntializationComplete = false;
@@ -40,17 +33,17 @@ var roleRemoteBuilder = {
 
 
 		// State information
-		if(creep.memory.building && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.building = false;
-            creep.say('I require more minerals');
+		if(creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {
+            creep.memory.upgrading = false;
+            creep.say('So Empty...');
 	    }
-	    if(!creep.memory.building && creep.store.getFreeCapacity() == 0) {
-	        creep.memory.building = true;
-	        creep.say('🚧 Constructing additional pylons');
+	    if(!creep.memory.upgrading && creep.store.getFreeCapacity() == 0) {
+	        creep.memory.upgrading = true;
+	        creep.say('SO FULL');
 		}
 		
 
-		// Part A
+		// Go to the assigned room. Get out of nasty edge cases
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 		if(creep.room.name != assignedRoom) {
 			creep.moveTo(new RoomPosition(25,25,assignedRoom)); // It won't go to 25,25 but it'll tell it to go there and once it's in the room this piece will no longer execute)
@@ -72,22 +65,19 @@ var roleRemoteBuilder = {
 		{
 			creep.moveTo(new RoomPosition(25,25,assignedRoom));
 		}
-		else if (!Memory.rooms[assignedRoom].initialPos) {
-			Memory.rooms[assignedRoom].initialPos = creep.pos;
-		}
 		
 
 		
-		// Part B
+		// Claim the controller if it hasn't been claimed
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 		//
 		else if((Memory.rooms[assignedRoom].claimed == false) && (creep.room.controller != null)) {
 			
-			if(creep.signController(creep.room.controller, 'Beware Wild Ducks') == ERR_NOT_IN_RANGE) {
+			if(creep.signController(creep.room.controller, 'Beware of Wild Ducks') == ERR_NOT_IN_RANGE) {
 				creep.moveTo(creep.room.controller);
 			}
 			//When this is done, set claimed flag for the room to true so this portion doesn't execute anymore
-			if(creep.room.controller.sign.text == 'Beware Wild Ducks')
+			if(creep.room.controller.sign.text == 'Beware of Wild Ducks')
 			{
 				Memory.rooms[assignedRoom].claimed = true;
 			}
@@ -200,20 +190,7 @@ var roleRemoteBuilder = {
 				creep.moveTo(closestConstructionSite, {visualizePathStyle: {stroke: '#ffffff'}});
 				}
 			}
-			else{
-			// This is where I need to add repairing functions to the builder.	Lifted maintainer code...
-				var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-					filter: (structure) => {
-						return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD || (structure.structureType == STRUCTURE_WALL && structure.hits < 200) || (structure.structureType == STRUCTURE_RAMPART && structure.hits < 5000)) &&
-							structure.hits < structure.hitsMax;
-					}
-				});
-				if(target) {
-					if(creep.repair(target) == ERR_NOT_IN_RANGE) {
-						creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-					}
-				}
-			}
+			// This is where I need to add repairing functions to the builder.	
 		}
 		// Part C
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -229,4 +206,4 @@ var roleRemoteBuilder = {
 	}
 };
 
-module.exports = roleRemoteBuilder;
+module.exports = roleRemoteUpgrader;

@@ -23,7 +23,7 @@ module.exports.loop = function () {
     
     if ((Game.rooms['E47N27'].energyAvailable)/(Game.rooms['E47N27'].energyCapacityAvailable) > .95) {
         //console.log(Game.rooms['E47N27'].energyAvailable == Game.rooms['E47N27'].energyCapacityAvailable);
-        towerRepair = 1;
+        //towerRepair = 1;
     }
     else
     {
@@ -152,7 +152,7 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length <3) {
+    if(upgraders.length <4) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
