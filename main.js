@@ -111,8 +111,8 @@ module.exports.loop = function () {
     var maintainers = _.filter(Game.creeps, (creep) => creep.memory.role == 'maintainer');
 
     // If spawn gets hit, send zone into safe mode
-
-    if((Game.spawns['Spawn1'].hits)/(Game.spawns['Spawn1'].hitsMax) < 1)
+    // || ((Game.spawns['Spawn2'].hits)/(Game.spawns['Spawn2'].hitsMax) < 1)
+    if(((Game.spawns['Spawn1'].hits)/(Game.spawns['Spawn1'].hitsMax) < 1))
     {
         //console.log('Safe Mode Activated');
         if (Game.rooms.safeMode == undefined) {
@@ -125,18 +125,28 @@ module.exports.loop = function () {
     }
 
 
-    //spawn code, move it into it's own function later
+    //Spawning count control code
 
-
-    //Exploratory Builder code
-    /*var newName = 'remoteBuilder' + Game.time;
-        //console.log('Spawning new upgrader: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,CARRY,MOVE,MOVE], newName, 
-            {memory: {role: 'remoteBuilder', assignedRoom: 'E47N27'}});
-    */
+    // Room 1 (E48N27) units
     
-    //400
-    //400
+    var remoteBuilders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteBuilder' && creep.memory.assignedRoom == 'E48N27');
+    if(remoteBuilders.length < 3) {
+        var newName = 'remoteBuilder' + Game.time;
+        //console.log('Spawning new remoteBuilder: ' + newName);
+        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+            {memory: {role: 'remoteBuilder', assignedRoom: 'E48N27'}});
+    }
+    
+    var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
+    if(remoteUpgraders.length < 3) {
+        var newName = 'remoteUpgrader' + Game.time;
+        //console.log('Spawning new remoteBuilder: ' + newName);
+        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+            {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N27'}});
+    }
+    
+
+    // Room 0 (E47N27) units
     if(builders.length < 1) {
         var newName = 'Builder' + Game.time;
         //console.log('Spawning new Builder: ' + newName);
