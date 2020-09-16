@@ -61,9 +61,10 @@ var roleRemoteClaimer = {
 
 		}
 
-		if(creep.room.controller.my)
+		else if(creep.room.controller.my && (creep.room.name == assignedRoom))
 		{
-			creep.suicide();
+			console.log('job done here, ending it now')
+			//creep.suicide();
 		}
 
 

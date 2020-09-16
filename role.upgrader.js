@@ -17,7 +17,7 @@ var roleUpgrader = {
                 creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
             }
 		}
-		/*  */
+		
         //finds structures that are closest
         else {
 			var targets = creep.room.find(FIND_STRUCTURES, {

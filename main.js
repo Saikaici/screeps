@@ -4,7 +4,8 @@ var roleBuilder = require('role.builder');
 var roleMaintainer = require('role.maintainer');
 var roleTransporter = require('role.transporter');
 var roleRemoteBuilder = require('role.remoteBuilder');
-
+var roleRemoteClaimer = require('role.remoteClaimer');
+var roleRemoteUpgrader = require('role.remoteUpgrader');
 
 module.exports.loop = function () {
 
@@ -272,6 +273,8 @@ module.exports.loop = function () {
         if(creep.memory.role == 'maintainer') {
             roleMaintainer.run(creep);
         }
+
+        // Remote Builder execution code
         try {
             if(creep.memory.role == 'remoteBuilder') {
                 roleRemoteBuilder.run(creep);
@@ -279,7 +282,25 @@ module.exports.loop = function () {
         } catch (error) {
             console.log('RemoteBuilder had an error:' + error);
         }
+
+        // Remote Claimer execution code
+        try {
+            if(creep.memory.role == 'remoteClaimer') {
+                roleRemoteClaimer.run(creep);
+            }
+        } catch (error) {
+            console.log('RemoteClaimer had an error:' + error);
+        }
         
+        // Remote Upgrader execution code
+        try {
+            if(creep.memory.role == 'remoteUpgrader') {
+                roleRemoteUpgrader.run(creep);
+            }
+        } catch (error) {
+            console.log('RemoteUpgrader had an error:' + error);
+        }
+
     }
 }
 
