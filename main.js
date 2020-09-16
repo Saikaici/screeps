@@ -42,7 +42,7 @@ module.exports.loop = function () {
         }
         else if(towerRepair) {
             var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => (( structure.hits < structure.hitsMax) && (structure.hits < 60000))
+                filter: (structure) => (( structure.hits < structure.hitsMax) && (structure.hits < 20000))
             });
             if(closestDamagedStructure && (((tower.store.getUsedCapacity(RESOURCE_ENERGY))/(tower.store.getCapacity(RESOURCE_ENERGY))) > .8 )){
                 tower.repair(closestDamagedStructure);  
@@ -143,7 +143,7 @@ module.exports.loop = function () {
             {memory: {role: 'builder'}});
     }
     
-    if(maintainers.length < 2) {
+    if(maintainers.length < 1) {
         var newName = 'Maintainer' + Game.time;
         //console.log('Spawning new maintaner: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,CARRY,MOVE,MOVE], newName, 

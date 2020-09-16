@@ -199,7 +199,20 @@ var roleRemoteBuilder = {
 				creep.moveTo(closestConstructionSite, {visualizePathStyle: {stroke: '#ffffff'}});
 				}
 			}
-			// This is where I need to add repairing functions to the builder.	
+			else{
+			// This is where I need to add repairing functions to the builder.	Lifted maintainer code...
+				var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD || (structure.structureType == STRUCTURE_WALL && structure.hits < 200) || (structure.structureType == STRUCTURE_RAMPART && structure.hits < 5000)) &&
+							structure.hits < structure.hitsMax;
+					}
+				});
+				if(target) {
+					if(creep.repair(target) == ERR_NOT_IN_RANGE) {
+						creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+					}
+				}
+			}
 		}
 		// Part C
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
