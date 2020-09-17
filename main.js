@@ -71,17 +71,12 @@ module.exports.loop = function () {
     
     var depositContainers = Game.rooms['E47N27'].find(FIND_STRUCTURES, {
          filter: (structure) => {
-            return (([STRUCTURE_CONTAINER,STRUCTURE_LINK].includes(structure.structureType)) && (['33, 42','35, 40','38, 20','35, 42','37, 42'].includes(structure.pos.x+', '+structure.pos.y)) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
+            return (([STRUCTURE_CONTAINER,STRUCTURE_LINK].includes(structure.structureType)) && (['33, 42','35, 42','35, 40','38, 20','37, 42'].includes(structure.pos.x+', '+structure.pos.y)) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
          }});
 
          //,STRUCTURE_STORAGE
     //console.log('deposit container ' +depositContainers);
 
-    //depositContainers = [];
-    //depositContainers[0] ="[room E47N27 pos 33,42]";
-    //depositContainers[1] ="[room E47N27 pos 35,40]";
-    //depositContainers[2] ="[room E47N27 pos 35,39]";
-    //[room E47N27 pos 33,42],[room E47N27 pos 35,40],[room E47N27 pos 35,39];
 
     //var removalContainers = [];
     var removalContainers = Game.rooms['E47N27'].find(FIND_STRUCTURES, {
@@ -90,9 +85,6 @@ module.exports.loop = function () {
         }});
    //console.log('removal container ' + removalContainers);
 
-    //removalContainers[0] ="[room E47N27 pos 35,45]";
-    //removalContainers[1] ="[room E47N27 pos 35,44]";
-    //"[room E47N27 pos 35,45,room E47N27 pos 35,44]";
 
     
     //define variables to determine how many of each type of worker there are
@@ -147,7 +139,7 @@ module.exports.loop = function () {
     
 
     // Room 0 (E47N27) units
-    if(builders.length < 1) {
+    if(builders.length < 0) {
         var newName = 'Builder' + Game.time;
         //console.log('Spawning new Builder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -163,7 +155,7 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length <4) {
+    if(upgraders.length <3) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -188,7 +180,7 @@ module.exports.loop = function () {
     }
 
 
-    if(transporters.length < 3) {
+    if(transporters.length < 2) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -209,7 +201,7 @@ module.exports.loop = function () {
         var newName = 'Harvester' + Game.time;
         //console.log('Spawning new harvester: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
-            {memory: {role: 'harvester', harvesting: '1',assignedNode: nodeAssignment}});
+            {memory: {role: 'harvester', harvesting: '1', assignedNode: nodeAssignment, assignedRoom: creepAssignedRoom}});
     }
     
     //Advanced Spawner assignment code
@@ -318,3 +310,19 @@ module.exports.loop = function () {
 // delete Memory.rooms
 // Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,CARRY,MOVE,MOVE], 'Remotebuildertest', {memory: {role: 'remoteBuilder', assignedRoom: 'E48N27'}});
 // for( var site of (Game.rooms['E48N27'].find(FIND_CONSTRUCTION_SITES)) ){site.remove()}
+
+
+//
+/*
+switch(var variable) {
+    case 'winning': 
+        variable = 'yee';
+        break
+    case 'losing':
+        variable = 'nooo!';
+        break
+    default:
+        variable = 'idk';
+        break
+}
+*/

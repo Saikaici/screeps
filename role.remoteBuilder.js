@@ -193,7 +193,7 @@ var roleRemoteBuilder = {
 			    closestConstructionSitePos[i] = closestConstructionSites[i].pos;
 			}
 			
-			var closestConstructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {filter: (ConstructionSite) => { return ConstructionSite.structureType == STRUCTURE_ROAD}}, closestConstructionSitePos);
+			var closestConstructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {filter: (ConstructionSite) => { return (ConstructionSite.structureType == STRUCTURE_ROAD) || (ConstructionSite.structureType == STRUCTURE_TOWER) || (ConstructionSite.structureType == STRUCTURE_CONTAINER) || (ConstructionSite.structureType == STRUCTURE_EXTENSION) }}, closestConstructionSitePos);
 			// Now build the closest constructionsite
 			if(closestConstructionSite) {
 				if(creep.build(closestConstructionSite) == ERR_NOT_IN_RANGE) {
