@@ -36,6 +36,7 @@ module.exports.loop = function () {
         //The Towers
         var tower = Game.getObjectById('5f5a8cb72be617a4ee8040a2');
         var tower2 = Game.getObjectById('5f5f0c3fb285fe2acd5e6c15');
+        var tower3 = Game.getObjectById('5f62cda835c16700edf76a65');
         if(tower) {
         var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if(closestHostile) {
@@ -52,6 +53,13 @@ module.exports.loop = function () {
         }
 
         if(tower2) {
+            var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            if(closestHostile) {
+                tower.attack(closestHostile);
+            }
+        }
+
+        if(tower3) {
             var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
                 tower.attack(closestHostile);
@@ -89,11 +97,6 @@ module.exports.loop = function () {
     
     //define variables to determine how many of each type of worker there are
     
-    var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
-    
-    var harvestersN0 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && creep.memory.assignedNode == 0);
-    var harvestersN1 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && creep.memory.assignedNode == 1);
-
     var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
 
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
@@ -161,8 +164,7 @@ module.exports.loop = function () {
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'upgrader'}});
     }
-    //300
-    //600
+
     //decide if Alpha transporter present, if not create one
     var primaryTransporter = false;
     var tombstoneTransporter = false;
@@ -187,7 +189,13 @@ module.exports.loop = function () {
             {memory: {role: 'transporter', transporting: false, alphaTransporter: primaryTransporter, tombstoneTransporter: tombstoneTransporter}});
     }
     
-    //removalContainers, depositcontainers
+
+    var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
+    
+    var harvestersN0 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && creep.memory.assignedNode == 0);
+    var harvestersN1 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && creep.memory.assignedNode == 1);
+
+
     
     //Prioritize Node 0, it has more open slots
     var nodeAssignment = 0;
@@ -195,14 +203,39 @@ module.exports.loop = function () {
         nodeAssignment = 1;
     }
     
-    //700
-    //1400
+
     if(harvesters.length < 2) {
         var newName = 'Harvester' + Game.time;
         //console.log('Spawning new harvester: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
-            {memory: {role: 'harvester', harvesting: '1', assignedNode: nodeAssignment, assignedRoom: creepAssignedRoom}});
+            {memory: {role: 'harvester', harvesting: '1', assignedNode: nodeAssignment}});
     }
+
+    //Harvester spawning code. All nodes need 1 harvester and are assumed to have containers, spawners, storage, or extensions to take things to.
+    //This works off of Memory and Rooms. Rooms need to be updated with sourceNodes (i.e. Memory.rooms['E47N27'].sourceNodes)
+    
+
+    //console.log(Object.keys(Game.rooms).length);
+    
+    //Gonna do spawns for each room.
+    /*
+    // i represents each room, j represents each node in each room
+    var roomIDs = Object.keys(Game.rooms);
+    var roomIDsLength = Object.keys(Game.rooms).length;
+    var tempHarvester;
+    
+    for(i = 0; i < roomIDsLength; i++)
+    {
+        var tempSourceArray = Game.rooms[roomIDs[i]].find(FIND_SOURCES);
+        
+        for(j = 0; j < tempSourceArray.length; j++)
+        {
+            
+
+        }
+
+    }
+    */
     
     //Advanced Spawner assignment code
     //var nodes = creep.room.find(FIND_SOURCES);
