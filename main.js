@@ -133,10 +133,10 @@ module.exports.loop = function () {
     }
     
     var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteUpgraders.length < 3) {
+    if(remoteUpgraders.length < 8) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N27'}});
     }
 
@@ -151,7 +151,7 @@ module.exports.loop = function () {
     
 
     // Room 0 (E47N27) units
-    if(builders.length < 0) {
+    if(builders.length < 1) {
         var newName = 'Builder' + Game.time;
         //console.log('Spawning new Builder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
