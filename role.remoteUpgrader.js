@@ -56,19 +56,33 @@ var roleRemoteUpgrader = {
 			}
 
 		}
-
-
-
-
 		
 		// Part C
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 		// If not building, it needs to harvest from the nearest node
+
+
+
 		else if(!creep.memory.upgrading && Memory.rooms[assignedRoom].sourceNodes) {
-			var closestNode = creep.pos.findClosestByPath(FIND_SOURCES, {filter: (node) => { return node}}, Memory.rooms[assignedRoom].sourceNodes);
-            if(creep.harvest(closestNode) == ERR_NOT_IN_RANGE) {
+
+			//Check for containers first
+			var maxEnergyCheck = creep.store.getCapacity(RESOURCE_ENERGY);
+            var target =  creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (((structure.structureType == STRUCTURE_STORAGE) || (structure.structureType == STRUCTURE_CONTAINER)) && (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck));
+                }
+            });
+            if(target != null) {
+                if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target.pos, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+			}
+			else {
+				var closestNode = creep.pos.findClosestByPath(FIND_SOURCES, {filter: (node) => { return node}}, Memory.rooms[assignedRoom].sourceNodes);
+            	if(creep.harvest(closestNode) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(closestNode, {visualizePathStyle: {stroke: '#ffaa00'}});
-            }
+				}
+			}
 
 		}
 		

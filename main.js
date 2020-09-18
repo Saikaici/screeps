@@ -272,7 +272,7 @@ module.exports.loop = function () {
                     //console.log(nodeHarvesterCount.length);
                     if(nodeHarvesterCount.length < 1) {
                         tempNodeMissing = true;
-                        //console.log('spawning harvester with a target tempNode.id: '+ tempNode.id );
+                        console.log('spawning harvester with a target tempNode.id: '+ tempNode.id );
                     }
                     //console.log(tempNodeMissing);
                     //_.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && (creep.memory.assignedNode == tempNode.id))
