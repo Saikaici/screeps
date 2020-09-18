@@ -27,4 +27,8 @@ Game.rooms['E47N27'].find(FIND_SOURCES, {
 
 
 
-Memory.rooms[0]
+var test = Memory.rooms;
+test;
+
+
+Memory.roomIDs = ['E47N27', 'E48N27'];

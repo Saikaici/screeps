@@ -3,9 +3,17 @@ var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
-        // Memory should have an assignedNode (Should be the actual node object in the room it's mining)
 
+        // Memory should have an assignedNodeID (Should be the actual node object ID in the room it's mining)
+        var assignedNode = Game.getObjectById(creep.memory.assignedNodeID);
         
+        //Creates a creep.memory.assignedRoom if it does not exist. This greatly simplifies other counting code.
+        if(creep.memory.assignedRoom == undefined)
+        {
+            creep.memory.assignedRoom = assignedNode.room;
+        }
+
+
 	    if((creep.store.getUsedCapacity() == 0) ){
             creep.memory.harvesting = true;
         } else if (creep.store.getFreeCapacity() == 0) {
@@ -15,8 +23,8 @@ var roleHarvester = {
 
         //Do mining
         if(creep.memory.harvesting) {
-            if(creep.harvest(sources[creep.memory.assignedNode]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[creep.memory.assignedNode], {visualizePathStyle: {stroke: '#ffaa00'}});
+            if(creep.harvest(assignedNode) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(assignedNode, {visualizePathStyle: {stroke: '#ffaa00'}});
             }
         }
 

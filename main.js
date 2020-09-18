@@ -79,7 +79,7 @@ module.exports.loop = function () {
     
     var depositContainers = Game.rooms['E47N27'].find(FIND_STRUCTURES, {
          filter: (structure) => {
-            return (([STRUCTURE_CONTAINER,STRUCTURE_LINK].includes(structure.structureType)) && (['33, 42','35, 42','35, 40','38, 20','37, 42'].includes(structure.pos.x+', '+structure.pos.y)) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
+            return (([STRUCTURE_CONTAINER,STRUCTURE_LINK].includes(structure.structureType)) && (['33, 42','35, 42','38, 20','37, 42'].includes(structure.pos.x+', '+structure.pos.y)) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0))
          }});
 
          //,STRUCTURE_STORAGE
@@ -125,7 +125,7 @@ module.exports.loop = function () {
     // Room 1 (E48N27) units
     
     var remoteBuilders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteBuilder' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteBuilders.length < 3) {
+    if(remoteBuilders.length < 1) {
         var newName = 'remoteBuilder' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -158,7 +158,7 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length <3) {
+    if(upgraders.length < 5) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -222,21 +222,42 @@ module.exports.loop = function () {
     // i represents each room, j represents each node in each room
     var roomIDs = Object.keys(Game.rooms);
     var roomIDsLength = Object.keys(Game.rooms).length;
-    var tempHarvester;
+
     
-    for(i = 0; i < roomIDsLength; i++)
-    {
-        var tempSourceArray = Game.rooms[roomIDs[i]].find(FIND_SOURCES);
-        
-        for(j = 0; j < tempSourceArray.length; j++)
+    var tempRoom;
+    var tempHarvestersRoomCount = [];
+    var tempSourceArray = [];
+
+    // _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.assignedRoom == creep.memory.assignedRoom);
+    if(true) {
+        for(i = 0; i < roomIDsLength; i++)
         {
+            //Get the count of creeps and the count of nodes.
+            tempHarvestersRoomCount = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.assignedRoom == creep.memory.roomIDs[i] );
+            tempSourceArray = Game.rooms[roomIDs[i]].find(FIND_SOURCES);
             
+            //If there aren't as many workers as nodes, figure out and spawn a worker for the node that is missing a worker.
+            if(tempHarvestersRoomCount.length < tempSourceArray.length) {
+                for(j = 0; j < tempSourceArray.length; j++)
+                {
+                    //This will break/not work well when there are multiple spawns in the same room.
+                    //This checks if there is a role with the corresponding role and assignedNode
+                    if(!(_.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.assignedNode == tempSourceArray[j].id))) {
+                        var roomSpawn = tempRoom[i].find(FIND_MY_SPAWNS);
+                        var newName = 'Harvester' + Game.time;
+                        //console.log('Spawning new harvester: ' + newName);
+                        Game.spawns[roomSpawn.spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
+                        {memory: {role: 'harvester', assignedNode: tempSourceArray[j].id, assignedRoom: tempSourceArray[j].room}});
+                    }
+
+                }
+            }
 
         }
-
+        
     }
     */
-    
+
     //Advanced Spawner assignment code
     //var nodes = creep.room.find(FIND_SOURCES);
     //var containers = 

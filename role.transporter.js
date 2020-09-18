@@ -19,7 +19,7 @@ var roleTransporter= {
         
         //optimally this would be a global variable so that it's not being constantly searched for.
         var tombstones = creep.room.find(FIND_TOMBSTONES, { filter: (tombstone) => {
-            return (tombstone.store.getUsedCapacity() > 0);
+            return (tombstone.store.getUsedCapacity() > 50);
         }});
 
         //Initial targets for the alpha constructor
