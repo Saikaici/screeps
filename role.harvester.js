@@ -3,87 +3,69 @@ var roleHarvester = {
     /** @param {Creep} creep **/
     run: function(creep) {
 
-        
+
+        // Memory should have an assignedNodeID (Should be the actual node object ID in the room it's mining)
+        var assignedNode = Game.getObjectById(creep.memory.assignedNodeID);
+        //var assignedRoom = assignedNode.room;
+        //console.log(assignedNode);
+
 	    if((creep.store.getUsedCapacity() == 0) ){
             creep.memory.harvesting = true;
         } else if (creep.store.getFreeCapacity() == 0) {
             creep.memory.harvesting = false;
         }
 
-        // Mining
 
+        //Do mining
         if(creep.memory.harvesting) {
-            var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[creep.memory.assignedNode]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[creep.memory.assignedNode], {visualizePathStyle: {stroke: '#ffaa00'}});
+            if(creep.harvest(assignedNode) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(assignedNode.pos, {visualizePathStyle: {stroke: '#ffaa00'}});
             }
         }
-        //Drop off at closest empty container
-        else if(creep.memory.harvesting == false){
-            var nearTargets = creep.room.find(FIND_STRUCTURES, {
+
+        //Deliver to nearest container
+        else if(!creep.memory.harvesting)
+        {
+            //Finds nearest container. Delivers to it.
+            var deliveryTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (((structure.structureType == STRUCTURE_CONTAINER)) &&
-                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
-                }
-            });
-            if((creep.memory.assignedNode == 0) && (creep.pos == (new RoomPosition(35,45,'E47N27'))))
-            {
-                creep.moveTo(new RoomPosition(35,44,'E47N27'));
+                return ((structure.structureType == STRUCTURE_CONTAINER) &&
+                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+            }});
+            //Prioritize delivering to spawn/extensions
+            if(!deliveryTarget) {
+                deliveryTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                    return (((structure.structureType == STRUCTURE_SPAWN) || (structure.structureType == STRUCTURE_EXTENSION)) &&
+                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+                }});
             }
-            else if(nearTargets.length > 0) {
-                if(creep.transfer(nearTargets[creep.memory.assignedNode], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(nearTargets[creep.memory.assignedNode], {visualizePathStyle: {stroke: '#ffffff'}});
+            //Deliver to storage if no nodes available.
+            if(!deliveryTarget) {
+                deliveryTarget = creep.room.storage;
+
             }
-        }
-    }
-        // Dropping off or not mining. First priority is tower, extensions, then spawn, then containers. This is jank, I know.
-            else{
-                     {
-                        console.log("Swapping to backup mode");
-                    var targets = creep.room.find(FIND_STRUCTURES, {
-                        filter: (structure) => {
-                            return ((structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_TOWER) &&
-                                structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
-                        }
-                    });
-                    if(targets.length > 0) {
-                        if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                        }
-                    }
-                    else {
-                        targets = creep.room.find(FIND_STRUCTURES, {
-                            filter: (structure) => {
-                                return (( (structure.structureType == STRUCTURE_SPAWN )) &&
-                                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
-                            }
-                        });
-                    if(targets.length > 0) {
-                        if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                        }
-                    }
-                    
-                
-                    else {
-                    targets = creep.room.find(FIND_STRUCTURES, {
-                        filter: (structure) => {
-                            return (((structure.structureType == STRUCTURE_CONTAINER)) &&
-                                structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
-                        }
-                    });
-                    if(targets.length > 0) {
-                        if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                    }
-                
+            //If still no container or storage, deliver it to anything with free energy storage
+            if(!deliveryTarget) {
+                try {
+                deliveryTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                    return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+                }});
                 }
-        
-            }   
-        
-                    
+                catch (error) {
+                    //This is because you have to for the try block
                 }
             }
+
+            //Tell it to deliver it if it can find a target
+            if(((creep.transfer(deliveryTarget, RESOURCE_ENERGY)) == ERR_NOT_IN_RANGE) && deliveryTarget) {
+                creep.moveTo(deliveryTarget.pos, {visualizePathStyle: {stroke: '#ffaa00'}});
+            }
+            else if(!deliveryTarget){
+                console.log('No free storage in ' + creep.room.name);
+            }
+            
         }
     }
 };

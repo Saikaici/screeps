@@ -9,6 +9,13 @@ var roleTransporter= {
         //console.log(depositContainers);
         // If full, set to a delivering state. If not, will be gathering
         
+
+        if(creep.room.name != creep.memory.assignedRoom) {
+            creep.moveTo(new RoomPosition(25,25,creep.memory.assignedRoom)); // It won't go to 25,25 but it'll tell it to go there and once it's in the room this piece will no longer execute)
+        }
+
+        
+
         if (creep.store.getUsedCapacity() == 0) {
             creep.memory.transporting = false;
         }

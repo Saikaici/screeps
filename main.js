@@ -96,9 +96,9 @@ module.exports.loop = function () {
 
     
     //define variables to determine how many of each type of worker there are
-    
     var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
 
+    
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
 
     var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
@@ -139,6 +139,15 @@ module.exports.loop = function () {
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N27'}});
     }
+
+    var transportersE48N27 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E48N27')));
+    //console.log(transportersE48N27);
+    if(transportersE48N27.length < 1) {
+        var newName = 'Transporter' + Game.time;
+        //console.log('Spawning new transporter: ' + newName);
+        Game.spawns['SpawnE48N27'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+            {memory: {role: 'transporter', transporting: false, alphaTransporter: true, tombstoneTransporter: true, assignedRoom: 'E48N27'}});
+    }
     
 
     // Room 0 (E47N27) units
@@ -158,7 +167,7 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length < 5) {
+    if(upgraders.length < 3) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -181,19 +190,23 @@ module.exports.loop = function () {
         tombstoneTransporter = true;
     }
 
+    
+
 
     if(transporters.length < 2) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
-            {memory: {role: 'transporter', transporting: false, alphaTransporter: primaryTransporter, tombstoneTransporter: tombstoneTransporter}});
+            {memory: {role: 'transporter', transporting: false, alphaTransporter: primaryTransporter, tombstoneTransporter: tombstoneTransporter, assignedRoom: 'E47N27'}});
     }
+
+
     
 
     var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
     
-    var harvestersN0 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && creep.memory.assignedNode == 0);
-    var harvestersN1 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && creep.memory.assignedNode == 1);
+    var harvestersN0 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && (creep.memory.assignedNode == 0));
+    var harvestersN1 = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && (creep.memory.assignedNode == 1));
 
 
     
@@ -203,14 +216,14 @@ module.exports.loop = function () {
         nodeAssignment = 1;
     }
     
-
+    /*
     if(harvesters.length < 2) {
         var newName = 'Harvester' + Game.time;
         //console.log('Spawning new harvester: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
             {memory: {role: 'harvester', harvesting: '1', assignedNode: nodeAssignment}});
     }
-
+    */
     //Harvester spawning code. All nodes need 1 harvester and are assumed to have containers, spawners, storage, or extensions to take things to.
     //This works off of Memory and Rooms. Rooms need to be updated with sourceNodes (i.e. Memory.rooms['E47N27'].sourceNodes)
     
@@ -218,13 +231,18 @@ module.exports.loop = function () {
     //console.log(Object.keys(Game.rooms).length);
     
     //Gonna do spawns for each room.
-    /*
+    ///*
     // i represents each room, j represents each node in each room
-    var roomIDs = Object.keys(Game.rooms);
+    try {
+        
+    
+    var roomIDs = Array.from(Object.keys(Game.rooms));
+    //console.log(roomIDs);
     var roomIDsLength = Object.keys(Game.rooms).length;
-
+    //console.log(roomIDsLength);
     
     var tempRoom;
+    var tempNode;
     var tempHarvestersRoomCount = [];
     var tempSourceArray = [];
 
@@ -233,21 +251,45 @@ module.exports.loop = function () {
         for(i = 0; i < roomIDsLength; i++)
         {
             //Get the count of creeps and the count of nodes.
-            tempHarvestersRoomCount = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.assignedRoom == creep.memory.roomIDs[i] );
+            tempRoom = String(roomIDs[i]);
+            //console.log('temproom iteration ' + i + ' ' + tempRoom);
+            tempHarvestersRoomCount = _.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && (creep.memory.assignedRoom == creep.memory.tempRoom) );
             tempSourceArray = Game.rooms[roomIDs[i]].find(FIND_SOURCES);
-            
+            //console.log(i);
             //If there aren't as many workers as nodes, figure out and spawn a worker for the node that is missing a worker.
-            if(tempHarvestersRoomCount.length < tempSourceArray.length) {
+            //if(tempHarvestersRoomCount.length < tempSourceArray.length) {
+            if(true) { //For troubleshooting
                 for(j = 0; j < tempSourceArray.length; j++)
                 {
+                    //console.log(i + ' ' + j);
                     //This will break/not work well when there are multiple spawns in the same room.
                     //This checks if there is a role with the corresponding role and assignedNode
-                    if(!(_.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.assignedNode == tempSourceArray[j].id))) {
-                        var roomSpawn = tempRoom[i].find(FIND_MY_SPAWNS);
+                    tempNode = tempSourceArray[j];
+                    //console.log(tempNode);
+                    var tempNodeMissing = false;
+                    //console.log( !(_.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && (creep.memory.assignedNode == tempNode.id)) == false) );
+                    var nodeHarvesterCount = (_.filter(Game.creeps, (creep) => ((creep.memory.role == 'harvester') && (creep.memory.assignedNodeID == tempNode.id))));
+                    //console.log(nodeHarvesterCount.length);
+                    if(nodeHarvesterCount.length < 1) {
+                        tempNodeMissing = true;
+                        //console.log('spawning harvester with a target tempNode.id: '+ tempNode.id );
+                    }
+                    //console.log(tempNodeMissing);
+                    //_.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && (creep.memory.assignedNode == tempNode.id))
+
+                    if(tempNodeMissing) {
+                        var roomSpawn = Game.rooms[tempRoom].find(FIND_MY_SPAWNS);
                         var newName = 'Harvester' + Game.time;
+                        
                         //console.log('Spawning new harvester: ' + newName);
-                        Game.spawns[roomSpawn.spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
-                        {memory: {role: 'harvester', assignedNode: tempSourceArray[j].id, assignedRoom: tempSourceArray[j].room}});
+                        //console.log(tempNode.id);
+                        //Temporary code since all spawns can't spawn this level of worker
+                        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
+                        {memory: {role: 'harvester', assignedNodeID: tempNode.id, assignedRoomID: tempNode.room}})
+
+                        //This is eventual code
+                        //roomSpawn.spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
+                        //{memory: {role: 'harvester', assignedNode: tempNode.id, assignedRoom: tempNode.room}})
                     }
 
                 }
@@ -256,7 +298,12 @@ module.exports.loop = function () {
         }
         
     }
-    */
+
+} catch (error) {
+        console.log(error + ' - is broke yes, yes')
+        console.log(error.stack);
+}
+    //*/
 
     //Advanced Spawner assignment code
     //var nodes = creep.room.find(FIND_SOURCES);
