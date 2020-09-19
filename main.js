@@ -133,7 +133,7 @@ module.exports.loop = function () {
     }
     
     var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteUpgraders.length < 8) {
+    if(remoteUpgraders.length < 6) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 

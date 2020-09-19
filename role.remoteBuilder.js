@@ -193,7 +193,7 @@ var roleRemoteBuilder = {
 			    closestConstructionSitePos[i] = closestConstructionSites[i].pos;
 			}
 			
-			var closestConstructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {filter: (ConstructionSite) => { return (ConstructionSite.structureType == STRUCTURE_ROAD) || (ConstructionSite.structureType == STRUCTURE_TOWER) || (ConstructionSite.structureType == STRUCTURE_CONTAINER) || (ConstructionSite.structureType == STRUCTURE_EXTENSION) }}, closestConstructionSitePos);
+			var closestConstructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {filter: (ConstructionSite) => { return (ConstructionSite.structureType == STRUCTURE_ROAD) || (ConstructionSite.structureType == STRUCTURE_TOWER) || (ConstructionSite.structureType == STRUCTURE_STORAGE) || (ConstructionSite.structureType == STRUCTURE_CONTAINER) || (ConstructionSite.structureType == STRUCTURE_EXTENSION) }}, closestConstructionSitePos);
 			// Now build the closest constructionsite
 			if(closestConstructionSite) {
 				if(creep.build(closestConstructionSite) == ERR_NOT_IN_RANGE) {
@@ -224,7 +224,7 @@ var roleRemoteBuilder = {
 			var maxEnergyCheck = creep.store.getCapacity(RESOURCE_ENERGY);
             var target =  creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (((structure.structureType == STRUCTURE_STORAGE) || (structure.structureType == STRUCTURE_CONTAINER)) && (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck));
+                    return (((structure.structureType == STRUCTURE_STORAGE) || (structure.structureType == STRUCTURE_STORAGE) || (structure.structureType == STRUCTURE_CONTAINER)) && (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck));
                 }
             });
             if(target != null) {
