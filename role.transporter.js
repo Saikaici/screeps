@@ -3,155 +3,198 @@ var roleTransporter= {
     // Creep job is to distribute from containers ONLY to spawn, extenders, and other containers. 
 
     /** @param {Creep} creep **/
-    run: function(creep, removalContainers, depositContainersEnter) {
-        //console.log('transporter start ' + depositContainersTest);
-        var depositContainers = depositContainersEnter;
-        //console.log(depositContainers);
-        // If full, set to a delivering state. If not, will be gathering
-        
-
-        if(creep.room.name != creep.memory.assignedRoom) {
-            creep.moveTo(new RoomPosition(25,25,creep.memory.assignedRoom)); // It won't go to 25,25 but it'll tell it to go there and once it's in the room this piece will no longer execute)
+    run: function(creep) {
+        //If this is setup, it'll jump out of this statement, otherwise it'll set up other memory objects and go to the room it needs to be in.
+        if(creep.memory.setup == true)
+        {
+            
+        }
+        //If the creep does not have memory of an assignedroom, assign it to the room it's in
+        else if(creep.memory.assignedRoom == undefined)
+        {
+            creep.memory.assignedRoom = creep.room.name;
+            //console.log('creep assigned room: '+ creep.memory.assignedRoom);
+        }
+        //Go to the assigned room if it isn't there
+        else if(creep.room.name != creep.memory.assignedRoom) {
+            var roomMove = new RoomPosition(25,25,creep.memory.assignedRoom);
+            creep.moveTo(roomMove); // It won't go to 25,25 but it'll tell it to go there and once it's in the room this piece will no longer execute)
+        }
+        //Once it's in it's assigned room, it generates a list of containers closest to the source node
+        else if(!creep.memory.removalContainersID)
+        {
+            var removalContainers = [];
+            //If removalContainers don't exist, we want to get them and then store them, only when a creep is generated though
+            var sources = creep.room.find(FIND_SOURCES);
+            //console.log('sources length: ' + sources.length);
+            var tempNode;
+            
+            for(i = 0; i < sources.length; i++)
+            {
+                tempNode = sources[i];
+                tempTarget = tempNode.pos.findClosestByRange(creep.room.find(FIND_STRUCTURES, {filter: (structure) => { return (structure.structureType == STRUCTURE_CONTAINER)}}));
+                //Using range because it's cheaper, plus these containers SHOULD be right next to the nodes
+                
+                removalContainers[i] = tempTarget.id;
+                //console.log('tempnode: '+ tempTarget);
+                //console.log('removalcontainer['+ i + '] ' + removalContainers[i]);
+                
+            }
+            
+            creep.memory.removalContainersID = removalContainers;
+            //console.log('removalContainers' + removalContainers)
+        }
+        else
+        {
+            creep.memory.setup = true;
         }
 
-        
-
+        // Normal checks for whether it's transporting or not
         if (creep.store.getUsedCapacity() == 0) {
             creep.memory.transporting = false;
         }
-        if (creep.store.getFreeCapacity() == 0) {
+        else if (creep.store.getFreeCapacity() == 0) {
             creep.memory.transporting = true;
         }
-        //var idle = false;
         
-        //optimally this would be a global variable so that it's not being constantly searched for.
-        var tombstones = creep.room.find(FIND_TOMBSTONES, { filter: (tombstone) => {
-            return (tombstone.store.getUsedCapacity() > 50);
-        }});
+        //If it's transporting, then it needs to find where it needs to put stuff
+        if(creep.memory.transporting)
+        {
+            //console.log('delivering to places');
+            //-----------------------------------------------------------------------------------
+            //First priority is Spawn and Extensions
 
-        //Initial targets for the alpha constructor
-        if(creep.memory.transporting) {
-            var alphaTargets = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            //Second priority is towers
+
+            //Third priority is storage
+
+
+            //Prioritize delivering to spawn/extensions
+            var deliveryTarget = undefined;
+            var creepMaxEnergy = creep.store.getCapacity;
+            var tempTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return ((structure.structureType == STRUCTURE_EXTENSION || ((structure.structureType == STRUCTURE_TOWER) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 180)) || structure.structureType == STRUCTURE_SPAWN) &&
-                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
+                return (((structure.structureType == STRUCTURE_SPAWN) || (structure.structureType == STRUCTURE_EXTENSION)) &&
+                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+            }});
+
+            if(tempTarget != null)
+            {
+                deliveryTarget = tempTarget;
+            }
+
+            
+            if(!deliveryTarget) {
+                //console.log('1st delivery target checkpoint' + deliveryTarget);
+
+                tempTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => { return ((structure.structureType == STRUCTURE_TOWER) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 180)) }});
+                if(tempTarget != null)
+                {
+                    deliveryTarget = tempTarget;
                 }
-            }); 
+                { filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }}
+                //{ filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }}
+                //console.log(' tower' +deliveryTarget);
+            }
+            if(!deliveryTarget) {
+                //console.log('2nd delivery target checkpoint, links' + deliveryTarget);
+
+                tempTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => { return ((structure.structureType == STRUCTURE_LINK) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 200)) }});
+                if(tempTarget != null)
+                {
+                    deliveryTarget = tempTarget;
+                }
+                //{ filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }}
+                //{ filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }}
+                //console.log(' link' +deliveryTarget);
+            }
+            //Deliver to storage if no nodes available.
+            if(!deliveryTarget) {
+                //console.log('3rd delivery target checkpoint, storage');
+                if(creep.room.storage.store.getFreeCapacity() > 0)
+                {
+                    deliveryTarget = creep.room.storage;
+                }
+                //console.log('storage' +deliveryTarget);
+            }
+            //If still no container or storage, deliver it to anything with free energy storage
+            if(!deliveryTarget) {
+                try {
+                deliveryTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                    return (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+                }});
+                }
+                catch (error) {
+                    //This is because you have to for the try block
+                    console.log('No deliveryTarget');
+                }
+            }
+
+            //console.log('delivering final target' + deliveryTarget)
+            //Tell it to deliver it if it can find a target
+            if(deliveryTarget)
+            {
+                if(((creep.transfer(deliveryTarget, RESOURCE_ENERGY)) == ERR_NOT_IN_RANGE) && deliveryTarget) {
+                    creep.moveTo(deliveryTarget.pos, {visualizePathStyle: {stroke: '#ffaa00'}});
+                }
+            }
+            else if(!deliveryTarget){
+                console.log('No free storage in ' + creep.room.name);
+            }
+            //-----------------------------------------------------------------------------------
+
+        }
+        //If it's not transporting, it needs to find containers to get stuff from
+        else if(!creep.memory.transporting)
+        {
+            //console.log('gathering from places');
+            //Get energy from the nearest container that has enough energy to fill the creep.
+            var collectionTarget;
+            maxEnergyCheck = creep.store.getCapacity(RESOURCE_ENERGY);
+            var tombstones = creep.room.find(FIND_TOMBSTONES, { filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }});
+            //console.log('tombstones: ' + tombstones);
+            //console.log('before loop:'+collectionTarget);
+            //if(tombstones.length > 0)
+            //if(tombstones.length > 0)
+            //{
+                //collectionTarget = creep.pos.findClosestByPath(FIND_TOMBSTONES, tombstones);
+            //}
+            //Collect from removal containers
+            
+            if(collectionTarget == undefined)
+            {   
+                var removalContainers = [];
+
+                for(var i in creep.memory.removalContainersID)
+                {
+                    removalContainers[i] = Game.getObjectById(creep.memory.removalContainersID[i]);
+                }
+                //Find a removal container to pull energy from
+                collectionTarget = creep.pos.findClosestByPath(removalContainers, { filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck) }})
+                
+            }
+            //Links need to be added eventually
             /*
-            var alphaTargets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return ((structure.structureType == STRUCTURE_EXTENSION || ((structure.structureType == STRUCTURE_TOWER) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 180)) || structure.structureType == STRUCTURE_SPAWN) &&
-                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0);
-                }
-            });
+            if(collectionTarget == undefined)
+            {   
+                //Find a removal container to pull energy from
+                collectionTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => { return ((structure.structureType == STRUCTURE_LINK) && (structure.store.getUsedCapacity(RESOURCE_ENERGY))) }})
+            }
             */
-
-        }
-        //Grab from containers that are passed as an array of structures
-        if(creep.memory.transporting == false) {  
-        //console.log(removalContainers);   
-        
-        //removalContainers.forEach(element => (element.getUsedCapacity(RESOURCE_ENERGY))/(element.getCapacity(RESOURCE_ENERGY)) > (target.getUsedCapacity(RESOURCE_ENERGY))/(target.getCapacity(RESOURCE_ENERGY))); { target = element};
-        //console.log(target);
-        
-        //console.log(tombstones);
-        //return ( ['RESOURCE_ENERGY','RESOURCE_GHODIUM','RESOURCE_KEANIUM','RESOURCE_UTRIUM','RESOURCE_ZYNTHIUM'].includes(tombstone.store.getUsedCapacity > 0));
-        if(tombstones.length > 0 && creep.memory.tombstoneTransporter == true) {
-            var tombClose = false;
-            if(creep.withdraw((tombstones[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE))  {
-                tombClose = false;
-                creep.moveTo(tombstones[0], {visualizePathStyle: {stroke: '#ffffff'}});
-            }
-            else{
-                tombClose = true;
-            }
-            //gather dropped resources
-            
-            //creep.withdraw(tombstones[0], RESOURCE_ENERGY||RESOURCE_GHODIUM||RESOURCE_KEANIUM||RESOURCE_UTRIUM||RESOURCE_ZYNTHIUM) == ERR_NOT_IN_RANGE)) {
-            if(creep.withdraw(tombstones[0], RESOURCE_GHODIUM) == ERR_NOT_ENOUGH_RESOURCES) {
-                if(creep.withdraw(tombstones[0], RESOURCE_ZYNTHIUM) == ERR_NOT_ENOUGH_RESOURCES) {
-                    if(creep.withdraw(tombstones[0], RESOURCE_UTRIUM) == ERR_NOT_ENOUGH_RESOURCES) {
-                        if(creep.withdraw(tombstones[0], RESOURCE_KEANIUM) == ERR_NOT_ENOUGH_RESOURCES) {
-                            creep.withdraw(tombstones[0], RESOURCE_ENERGY);
-                            
-                        }
-                    }
+            //console.log(collectionTarget);
+            //Go collect the collectionTarget
+            if(collectionTarget != undefined)
+            {
+                if(((creep.withdraw(collectionTarget, RESOURCE_ENERGY)) == ERR_NOT_IN_RANGE) && collectionTarget) {
+                    creep.moveTo(collectionTarget.pos, {visualizePathStyle: {stroke: '#ffaa00'}});
                 }
             }
-        }
-        else if(((creep.room.energyAvailable)/(creep.room.energyCapacityAvailable) < 1) && (creep.memory.alphaTransporter == true)) {
-            //If it's the alpha transporter, it can withdraw from whatever it needs to fill the extensions for further spawning.
-            var maxEnergyCheck = creep.store.getCapacity(RESOURCE_ENERGY);
-            var target =  creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (((structure.structureType == STRUCTURE_STORAGE) || (structure.structureType == STRUCTURE_CONTAINER)) && (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck));
-                }
-            });
-            //console.log('Gather target:' + maxEnergyCheck);
-            //console.log('Gather target:' + target);
-            if(target != null) {
-                if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target.pos, {visualizePathStyle: {stroke: '#ffffff'}});
-                }
-            }
-            }
-        
-
-        // if no dropped resources, do all the normal collection things.
-        else {
-            var target = removalContainers[0];
-
-            for(var i = 0; i<removalContainers.length; i++) {
-                //target.getUsedCapacity(RESOURCE_ENERGY))/(target.getCapacity(RESOURCE_ENERGY))
-                //console.log(removalContainers[i]);
-                if(((removalContainers[i].store.getUsedCapacity(RESOURCE_ENERGY))/(removalContainers[i].store.getCapacity(RESOURCE_ENERGY))) > ((target.store.getUsedCapacity(RESOURCE_ENERGY))/(target.store.getCapacity(RESOURCE_ENERGY)))) {
-                    target = removalContainers[i];
-                }
-
-                if(target != null) {
-                    if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target.pos, {visualizePathStyle: {stroke: '#ffffff'}});
-                    }
-                }
-            }
-        } 
-        }
-        //END OF GATHERING CODE
-
-
-        else if(creep.memory.transporting && creep.memory.alphaTransporter && alphaTargets){
-            //Prioritize cannon deliveries, then extenders, then spawn. Straight lifted from Harvester code.
-            
-            // targets are defined above
-                if(alphaTargets) {
-                    if(creep.transfer(alphaTargets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(alphaTargets, {visualizePathStyle: {stroke: '#ffffff'}});
-                    }
-                }
-            }
-
-        else if((creep.store[RESOURCE_GHODIUM||RESOURCE_KEANIUM||RESOURCE_UTRIUM||RESOURCE_ZYNTHIUM] > 0) && creep.memory.tombstoneTransporter && creep.memory.transporting) {
-            var targets = creep.room.storage;
-            console.log(targets[0]);
-            if(targets.length > 0) {
-                if(creep.transfer(targets[0], [RESOURCE_ENERGY||RESOURCE_GHODIUM||RESOURCE_KEANIUM||RESOURCE_UTRIUM||RESOURCE_ZYNTHIUM]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0].pos, {visualizePathStyle: {stroke: '#ffffff'}});
-                }
+            else if(!collectionTarget){
+                //console.log('Nothing to collect in ' + creep.room.name);
             }
         }
 
-        else if(creep.memory.transporting) {
-            //console.log('transporter end ' + depositContainers);
-            if(depositContainers.length > 0) {
-                if(creep.transfer(depositContainers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(depositContainers[0], {visualizePathStyle: {stroke: '#ffffff'}});
-                            }
-                        }
-                        //Drop it in the Storage node for the room
-                        else if(creep.transfer(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: '#ffffff'}});
-                        }
-        }
         
     }
 

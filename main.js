@@ -96,7 +96,7 @@ module.exports.loop = function () {
 
     
     //define variables to determine how many of each type of worker there are
-    var transporters = _.filter(Game.creeps, (creep) => creep.memory.role == 'transporter');
+    var transporters = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E47N27')));
 
     
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
@@ -133,21 +133,23 @@ module.exports.loop = function () {
     }
     
     var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteUpgraders.length < 6) {
+    if(remoteUpgraders.length < 1) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N27'}});
     }
 
+    
     var transportersE48N27 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E48N27')));
     //console.log(transportersE48N27);
-    if(transportersE48N27.length < 1) {
+    if(transportersE48N27.length < 2) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['SpawnE48N27'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
-            {memory: {role: 'transporter', transporting: false, alphaTransporter: true, tombstoneTransporter: true, assignedRoom: 'E48N27'}});
+            {memory: {role: 'transporter', transporting: false, assignedRoom: 'E48N27'}});
     }
+    
     
 
     // Room 0 (E47N27) units
@@ -197,7 +199,7 @@ module.exports.loop = function () {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
-            {memory: {role: 'transporter', transporting: false, alphaTransporter: primaryTransporter, tombstoneTransporter: tombstoneTransporter, assignedRoom: 'E47N27'}});
+            {memory: {role: 'transporter', transporting: false, assignedRoom: 'E47N27'}});
     }
 
 
@@ -247,6 +249,9 @@ module.exports.loop = function () {
     var tempSourceArray = [];
 
     // _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.assignedRoom == creep.memory.assignedRoom);
+    
+    
+
     if(true) {
         for(i = 0; i < roomIDsLength; i++)
         {
@@ -278,13 +283,16 @@ module.exports.loop = function () {
                     //_.filter(Game.creeps, (creep) => (creep.memory.role == 'harvester') && (creep.memory.assignedNode == tempNode.id))
 
                     if(tempNodeMissing) {
-                        var roomSpawn = Game.rooms[tempRoom].find(FIND_MY_SPAWNS);
+                        var tempSpawn = Game.rooms[tempRoom].find(FIND_MY_SPAWNS);
+                        var roomSpawn = tempSpawn[0];
                         var newName = 'Harvester' + Game.time;
+                        console.log(roomSpawn.name);
+                        //console.log(tempRoom);
                         
                         //console.log('Spawning new harvester: ' + newName);
                         //console.log(tempNode.id);
                         //Temporary code since all spawns can't spawn this level of worker
-                        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
+                        Game.spawns[roomSpawn.name].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
                         {memory: {role: 'harvester', assignedNodeID: tempNode.id, assignedRoomID: tempNode.room}})
 
                         //This is eventual code
@@ -362,9 +370,16 @@ module.exports.loop = function () {
         if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
-        if(creep.memory.role == 'transporter') {
-            roleTransporter.run(creep, removalContainers, depositContainers);
+        try {
+            if(creep.memory.role == 'transporter') {
+                roleTransporter.run(creep, removalContainers, depositContainers);
+            }
+            
+        } catch (error) {
+            console.log('your transporter code sucks');
+            console.log('Transporter had an error:' + error);
         }
+        
         //console.log('transporter count ' + transporters.length)
         //removalContainers, depositcontainers
         if(creep.memory.role == 'upgrader') {
