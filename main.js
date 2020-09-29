@@ -231,20 +231,23 @@ module.exports.loop = function () {
             {memory: {role: 'harvester', harvesting: '1', assignedNode: nodeAssignment}});
     }
     */
+
+
+
+
     //Harvester spawning code. All nodes need 1 harvester and are assumed to have containers, spawners, storage, or extensions to take things to.
     //This works off of Memory and Rooms. Rooms need to be updated with sourceNodes (i.e. Memory.rooms['E47N27'].sourceNodes)
     
-
     //console.log(Object.keys(Game.rooms).length);
     
     //Gonna do spawns for each room.
     ///*
     // i represents each room, j represents each node in each room
     try {
-        
     
     var roomIDs = Array.from(Object.keys(Game.rooms));
     //console.log(roomIDs);
+    //console.log(Object.keys(Game.rooms));
     var roomIDsLength = Object.keys(Game.rooms).length;
     //console.log(roomIDsLength);
     
@@ -254,7 +257,6 @@ module.exports.loop = function () {
     var tempSourceArray = [];
 
     // _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester' && creep.memory.assignedRoom == creep.memory.assignedRoom);
-    
     
 
     if(true) {
