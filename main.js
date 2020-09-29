@@ -429,15 +429,19 @@ module.exports.loop = function () {
     
     //Turret code, roles ect
     
-    for(var turret of Memory.turrets) {
-        //console.log(turret);
-        // Turret execution code
-        try {
-            roleTurret.run(Game.getObjectById(turret));
-        } catch (error) {
-            console.log('turret had an error:' + error);
+    if(Memory.turrets)
+    {
+        for(var turret of Memory.turrets) {
+            //console.log(turret);
+            // Turret execution code
+            try {
+                roleTurret.run(Game.getObjectById(turret));
+            } catch (error) {
+                delete Memory.turrets;
+                console.log('turret' + turret + ' no longer exists, deleting Memory.turrets to be rebuilt');
+            }
+        
         }
-    
     }
     
 
@@ -445,7 +449,7 @@ module.exports.loop = function () {
 
     
     //Update turret IDs into memory. Delete
-    if((Game.time % turretMemoryUpdateRate) == 0) 
+    if(((Game.time % turretMemoryUpdateRate) == 0) || (Memory.turrets == undefined)) 
     {
 
         //Delete current memory for Towers
@@ -473,9 +477,6 @@ module.exports.loop = function () {
 
         console.log('Updating Turret IDs: ' + turretList);
     }
-
-
-
 }
 
 // Console Commands

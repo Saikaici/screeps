@@ -2,6 +2,7 @@ var roleTurret = {
 
     /** @param {Creep} tower **/
     run: function(tower) {
+        // More convenient hard coding
         const turretRepairLimit = 125000;
 
 
