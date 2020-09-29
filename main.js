@@ -6,12 +6,24 @@ var roleTransporter = require('role.transporter');
 var roleRemoteBuilder = require('role.remoteBuilder');
 var roleRemoteClaimer = require('role.remoteClaimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
+var roleTurret = require('role.turret');
 
 module.exports.loop = function () {
+
+    //GLOBAL CONSTANTS
+    const turretMemoryUpdateRate = 250;
+
+
+
+
+    //GLOBAL variables
+
+
 
     // TBH best way to reference rooms is by name directly and then throw it into 'E47N27' like Game.rooms['E47N27']
 
 
+    //Default code to clean from memory list of dead creeps
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
             delete Memory.creeps[name];
@@ -20,19 +32,11 @@ module.exports.loop = function () {
     }
     //
     
-    var towerRepair = 0;
-    
-    if ((Game.rooms['E47N27'].energyAvailable)/(Game.rooms['E47N27'].energyCapacityAvailable) > .95) {
-        //console.log(Game.rooms['E47N27'].energyAvailable == Game.rooms['E47N27'].energyCapacityAvailable);
-        towerRepair = 1;
-    }
-    else
-    {
-        towerRepair = 0;
-    }
+
     
     //console.log((Game.rooms['E47N27'].energyAvailable / Game.rooms['E47N27'].energyCapacityAvailable));
     
+    /*
         //The Towers
         var tower = Game.getObjectById('5f5a8cb72be617a4ee8040a2');
         var tower2 = Game.getObjectById('5f5f0c3fb285fe2acd5e6c15');
@@ -66,7 +70,7 @@ module.exports.loop = function () {
                 tower3.attack(closestHostile);
             }
         }
-    
+    */
     
     
     
@@ -420,7 +424,58 @@ module.exports.loop = function () {
             console.log('RemoteUpgrader had an error:' + error);
         }
 
+        
     }
+    
+    //Turret code, roles ect
+    
+    for(var turret of Memory.turrets) {
+        //console.log(turret);
+        // Turret execution code
+        try {
+            roleTurret.run(Game.getObjectById(turret));
+        } catch (error) {
+            console.log('turret had an error:' + error);
+        }
+    
+    }
+    
+
+
+
+    
+    //Update turret IDs into memory. Delete
+    if((Game.time % turretMemoryUpdateRate) == 0) 
+    {
+
+        //Delete current memory for Towers
+        if(Memory.turrets)
+        {
+            delete Memory.turrets;
+        }
+
+        //making an empty list to push things onto
+        var turretList = [];
+
+        for(var structure in Game.structures) //Game.structures returns all the IDs
+        {
+            //console.log((structure));
+            if(Game.getObjectById(structure).structureType == STRUCTURE_TOWER)
+            {
+                //console.log(structure);
+                //If it's a turret, push it onto the temp list
+                turretList.push(structure);
+            }
+        }
+
+        //Chuck that sucker into memory
+        Memory.turrets = turretList;
+
+        console.log('Updating Turret IDs: ' + turretList);
+    }
+
+
+
 }
 
 // Console Commands
