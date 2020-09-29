@@ -108,6 +108,17 @@ var roleTransporter= {
                 //{ filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }}
                 //console.log(' link' +deliveryTarget);
             }
+            //Deliver to room's terminal if no nodes available.
+            if(!deliveryTarget) {
+                //console.log('2nd delivery target checkpoint, links' + deliveryTarget);
+
+                tempTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => { return ((structure.structureType == STRUCTURE_TERMINAL) && (structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)) }});
+                if(tempTarget != null)
+                {
+                    deliveryTarget = tempTarget;
+                }
+            }
+            
             //Deliver to storage if no nodes available.
             if(!deliveryTarget) {
                 //console.log('3rd delivery target checkpoint, storage');
@@ -117,6 +128,9 @@ var roleTransporter= {
                 }
                 //console.log('storage' +deliveryTarget);
             }
+            
+
+            
             //If still no container or storage, deliver it to anything with free energy storage
             if(!deliveryTarget) {
                 try {

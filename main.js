@@ -24,7 +24,7 @@ module.exports.loop = function () {
     
     if ((Game.rooms['E47N27'].energyAvailable)/(Game.rooms['E47N27'].energyCapacityAvailable) > .95) {
         //console.log(Game.rooms['E47N27'].energyAvailable == Game.rooms['E47N27'].energyCapacityAvailable);
-        //towerRepair = 1;
+        towerRepair = 1;
     }
     else
     {
@@ -44,7 +44,7 @@ module.exports.loop = function () {
         }
         else if(towerRepair) {
             var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => (( structure.hits < structure.hitsMax) && (structure.hits < 20000))
+                filter: (structure) => (( structure.hits < structure.hitsMax) && (structure.hits < 150000))
             });
             if(closestDamagedStructure && (((tower.store.getUsedCapacity(RESOURCE_ENERGY))/(tower.store.getCapacity(RESOURCE_ENERGY))) > .8 )){
                 tower.repair(closestDamagedStructure);  
@@ -55,14 +55,15 @@ module.exports.loop = function () {
         if(tower2) {
             var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
-                tower.attack(closestHostile);
+                tower2.attack(closestHostile);
             }
         }
 
         if(tower3) {
-            var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            var closestHostile = tower3.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            
             if(closestHostile) {
-                tower.attack(closestHostile);
+                tower3.attack(closestHostile);
             }
         }
     
@@ -128,15 +129,15 @@ module.exports.loop = function () {
     if(remoteBuilders.length < 1) {
         var newName = 'remoteBuilder' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'remoteBuilder', assignedRoom: 'E48N27'}});
     }
     
     var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteUpgraders.length < 1) {
+    if(remoteUpgraders.length < 2) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N27'}});
     }
 
@@ -169,7 +170,7 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length < 3) {
+    if(upgraders.length < 4) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 

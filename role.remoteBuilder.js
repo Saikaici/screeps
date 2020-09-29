@@ -193,7 +193,7 @@ var roleRemoteBuilder = {
 			    closestConstructionSitePos[i] = closestConstructionSites[i].pos;
 			}
 			
-			var closestConstructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {filter: (ConstructionSite) => { return (ConstructionSite.structureType == STRUCTURE_ROAD) || (ConstructionSite.structureType == STRUCTURE_TOWER) || (ConstructionSite.structureType == STRUCTURE_STORAGE) || (ConstructionSite.structureType == STRUCTURE_CONTAINER) || (ConstructionSite.structureType == STRUCTURE_EXTENSION) }}, closestConstructionSitePos);
+			var closestConstructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {filter: (ConstructionSite) => { return (ConstructionSite.structureType == STRUCTURE_ROAD) || (ConstructionSite.structureType == STRUCTURE_RAMPART)  || (ConstructionSite.structureType == STRUCTURE_TERMINAL) || (ConstructionSite.structureType == STRUCTURE_TOWER) || (ConstructionSite.structureType == STRUCTURE_STORAGE) || (ConstructionSite.structureType == STRUCTURE_CONTAINER) || (ConstructionSite.structureType == STRUCTURE_EXTENSION) }}, closestConstructionSitePos);
 			// Now build the closest constructionsite
 			if(closestConstructionSite) {
 				if(creep.build(closestConstructionSite) == ERR_NOT_IN_RANGE) {
@@ -204,7 +204,7 @@ var roleRemoteBuilder = {
 			// This is where I need to add repairing functions to the builder.	Lifted maintainer code...
 				var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
 					filter: (structure) => {
-						return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD || (structure.structureType == STRUCTURE_WALL && structure.hits < 200) || (structure.structureType == STRUCTURE_RAMPART && structure.hits < 5000)) &&
+						return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_TERMINAL || structure.structureType == STRUCTURE_ROAD || (structure.structureType == STRUCTURE_WALL && structure.hits < 200) || (structure.structureType == STRUCTURE_RAMPART && structure.hits < 5000)) &&
 							structure.hits < structure.hitsMax;
 					}
 				});
