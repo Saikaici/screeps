@@ -20,6 +20,16 @@ module.exports.loop = function () {
 
 
 
+    //
+    /*
+    // This will create a new battlegroup
+    Memory.BattleGroup.Alpha.initialized = false;
+    Memory.BattleGroup.Alpha.spawned = false;
+    Memory.BattleGroup.Alpha.targetRoom = '';
+    Memory.BattleGroup.Alpha.stagingRoom = '';
+    Memory.BattleGroup.Alpha.rallyRoom = '';
+    */
+
     // TBH best way to reference rooms is by name directly and then throw it into 'E47N27' like Game.rooms['E47N27']
 
 
@@ -138,7 +148,7 @@ module.exports.loop = function () {
     }
     
     var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteUpgraders.length < 2) {
+    if(remoteUpgraders.length < 3) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
         Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
@@ -174,7 +184,7 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length < 4) {
+    if(upgraders.length < 2) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 

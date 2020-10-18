@@ -3,7 +3,7 @@ var roleTurret = {
     /** @param {Creep} tower **/
     run: function(tower) {
         // More convenient hard coding
-        const turretRepairLimit = 125000;
+        const turretRepairLimit = 200000;
 
 
         var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
