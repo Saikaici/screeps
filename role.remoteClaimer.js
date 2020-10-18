@@ -44,18 +44,23 @@ var roleRemoteClaimer = {
 		// Claim the controller if it hasn't been claimed
         //-----------------------------------------------------------------------------------------------------------------------------------------------------------
 		//
+
+		// 'There isnt ennethin wrong with the way I say ennethin'
+
+		// 
+
 		else if(!creep.room.controller.my) {
 			creep.moveTo(creep.room.controller);
-			if(creep.signController(creep.room.controller, 'Beware of Wild Ducks') == ERR_NOT_IN_RANGE) {
+			if(creep.signController(creep.room.controller, 'doki doki') == ERR_NOT_IN_RANGE) {
 				creep.moveTo(creep.room.controller);
 			}
 			else if(creep.claimController(creep.room.controller) == ERR_NOT_IN_RANGE) {
 				creep.moveTo(creep.room.controller);
 			}
 			//When this is done, set claimed flag for the room to true so this portion doesn't execute anymore
-			if(creep.room.controller.sign.text == 'Beware of Wild Ducks')
+			if(creep.room.controller.sign.text == 'doki doki')
 			{
-				creep.signController(creep.room.controller, 'Beware of Wild Ducks')
+				creep.signController(creep.room.controller, 'doki doki')
 				Memory.rooms[assignedRoom].claimed = true;
 			}
 

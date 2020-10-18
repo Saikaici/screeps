@@ -134,8 +134,60 @@ module.exports.loop = function () {
         //console.log('Safe Mode Not Activated');
     }
 
+    //Set Memory Unit Count code
+    //delete Memory.rooms.E48N26.units;
+    if(Memory.rooms.E48N26.units == undefined)
+    {
+        Memory.rooms.E48N26.units = {}; //create unit set for new room
+        Memory.rooms.E48N26.units.transporter = 1;
+        Memory.rooms.E48N26.units.maintainer = 1;
+        Memory.rooms.E48N26.units.builder = 1;
+        Memory.rooms.E48N26.units.upgrader = 1;
+        Memory.rooms.E48N26.units.maintainer = 1;
+
+        //Note harvesters are defined in other code
+    }
+
+
+    //Spawning from memory code
+
 
     //Spawning count control code
+
+    // Room 3 units (E47N26) units
+    var remoteBuildersR3 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteBuilder' && creep.memory.assignedRoom == 'E47N26');
+    if(remoteBuildersR3.length < 1) {
+        var newName = 'remoteBuilder' + Game.time;
+        //console.log('Spawning new remoteBuilder: ' + newName);
+        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+            {memory: {role: 'remoteBuilder', assignedRoom: 'E47N26'}});
+    }
+
+    var remoteUpgradersR3 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E47N26');
+    if(remoteUpgradersR3.length < 1) {
+        var newName = 'remoteUpgrader' + Game.time;
+        //console.log('Spawning new remoteBuilder: ' + newName);
+        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
+            {memory: {role: 'remoteUpgrader', assignedRoom: 'E47N26'}});
+    }
+
+
+    // Room 2 units (E48N26) units
+    var remoteBuildersR2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteBuilder' && creep.memory.assignedRoom == 'E48N26');
+    if(remoteBuildersR2.length < 2) {
+        var newName = 'remoteBuilder' + Game.time;
+        //console.log('Spawning new remoteBuilder: ' + newName);
+        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+            {memory: {role: 'remoteBuilder', assignedRoom: 'E48N26'}});
+    }
+
+    var remoteUpgradersR2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N26');
+    if(remoteUpgradersR2.length < 1) {
+        var newName = 'remoteUpgrader' + Game.time;
+        //console.log('Spawning new remoteBuilder: ' + newName);
+        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
+            {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N26'}});
+    }
 
     // Room 1 (E48N27) units
     
@@ -146,9 +198,10 @@ module.exports.loop = function () {
         Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'remoteBuilder', assignedRoom: 'E48N27'}});
     }
+
     
     var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteUpgraders.length < 3) {
+    if(remoteUpgraders.length < 2) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
         Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
@@ -303,15 +356,28 @@ module.exports.loop = function () {
                         var tempSpawn = Game.rooms[tempRoom].find(FIND_MY_SPAWNS);
                         var roomSpawn = tempSpawn[0];
                         var newName = 'Harvester' + Game.time;
-                        console.log(roomSpawn.name);
+                        //console.log(roomSpawn.name);
                         //console.log(tempRoom);
                         
                         //console.log('Spawning new harvester: ' + newName);
                         //console.log(tempNode.id);
                         //Temporary code since all spawns can't spawn this level of worker
-                        Game.spawns[roomSpawn.name].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
-                        {memory: {role: 'harvester', assignedNodeID: tempNode.id, assignedRoomID: tempNode.room}})
-
+                        //console.log(Game.spawns[roomSpawn.name].room.energyCapacityAvailable);
+                        if(roomSpawn && Game.spawns[roomSpawn.name].room.energyCapacityAvailable > 750)
+                        {
+                            Game.spawns[roomSpawn.name].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
+                            {memory: {role: 'harvester', assignedNodeID: tempNode.id, assignedRoomID: tempNode.room}})
+                        }
+                        else if(roomSpawn && Game.spawns[roomSpawn.name].room.energyCapacityAvailable > 549)
+                        {
+                            Game.spawns[roomSpawn.name].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE], newName, 
+                                {memory: {role: 'harvester', assignedNodeID: tempNode.id, assignedRoomID: tempNode.room}})
+                        }
+                        else if(roomSpawn && Game.spawns[roomSpawn.name].room.energyCapacityAvailable > 299)
+                        {
+                            Game.spawns[roomSpawn.name].spawnCreep([WORK,WORK,CARRY,MOVE], newName, 
+                                {memory: {role: 'harvester', assignedNodeID: tempNode.id, assignedRoomID: tempNode.room}})
+                        }
                         //This is eventual code
                         //roomSpawn.spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE], newName, 
                         //{memory: {role: 'harvester', assignedNode: tempNode.id, assignedRoom: tempNode.room}})
@@ -511,3 +577,10 @@ switch(var variable) {
         break
 }
 */
+
+/*
+Game.spawns['SpawnE48N27'].spawnCreep([CLAIM,MOVE], 'ClaimerDESU', 
+    {memory: {role: 'remoteClaimer', assignedRoom: 'E48N26'}});
+
+*/
+
