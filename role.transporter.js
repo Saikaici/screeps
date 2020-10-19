@@ -121,10 +121,13 @@ var roleTransporter= {
             
             //Deliver to storage if no nodes available.
             if(!deliveryTarget) {
-                //console.log('3rd delivery target checkpoint, storage');
-                if(creep.room.storage.store.getFreeCapacity() > 0)
+                if(creep.room.storage != undefined)
                 {
-                    deliveryTarget = creep.room.storage;
+                    //console.log('3rd delivery target checkpoint, storage');
+                    if(creep.room.storage.store.getFreeCapacity() > 0)
+                    {
+                        deliveryTarget = creep.room.storage;
+                    }
                 }
                 //console.log('storage' +deliveryTarget);
             }
