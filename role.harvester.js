@@ -9,6 +9,31 @@ var roleHarvester = {
         //var assignedRoom = assignedNode.room;
         //console.log(assignedNode);
 
+        //A game ID of the link that the harvester gets assigned to.
+        var depositLink;
+        
+        
+        //If the harvester is proximate to a link, it needs to prioritize that first.
+        //Set up a variable that changes how the harvester acts
+        if(creep.memory.nodeNextToLink == undefined)
+        {
+            //creates a piece of memory that will be checked in deposit targets
+            //creep.memory.nodeNextToLink = false;
+            //console.log(creep.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}}));
+            for(var link of creep.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}})) {
+                //console.log(link);
+                if(assignedNode.pos.inRangeTo(link.pos, 1))
+                {
+                    depositLink = link.id;
+                    creep.Memory.creepNextToLink = true;
+                }
+            
+            }
+        }
+        
+
+       //room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+
 	    if((creep.store.getUsedCapacity() == 0) ){
             creep.memory.harvesting = true;
         } else if (creep.store.getFreeCapacity() == 0) {
@@ -26,12 +51,21 @@ var roleHarvester = {
         //Deliver to nearest container
         else if(!creep.memory.harvesting)
         {
-            //Finds nearest container. Delivers to it.
-            var deliveryTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                return ((structure.structureType == STRUCTURE_CONTAINER) &&
-                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
-            }});
+            var deliveryTarget;
+            //If next to a link, deposit into it. Always. It's not moving. It'll waste way too much time moving to other storage if it has a link.
+            if(creep.memory.nodeNextToLink)
+            {
+                deliveryTarget = Game.getObjectById(depositLink);
+            }
+
+            //Finds nearest container or storage. Delivers to it.
+            if(!deliveryTarget) {
+                deliveryTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                    return (((structure.structureType == STRUCTURE_CONTAINER) || (structure.structureType == STRUCTURE_STORAGE)) &&
+                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+                }});
+            }  
             //Prioritize delivering to spawn/extensions
             if(!deliveryTarget) {
                 deliveryTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -40,11 +74,13 @@ var roleHarvester = {
                         structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
                 }});
             }
+            /*
             //Deliver to storage if no nodes available.
             if(!deliveryTarget) {
                 deliveryTarget = creep.room.storage;
 
             }
+            */
             //If still no container or storage, deliver it to anything with free energy storage
             if(!deliveryTarget) {
                 try {
