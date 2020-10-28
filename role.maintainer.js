@@ -31,7 +31,7 @@ var roleMaintainer= {
         else {
             var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD || (structure.structureType == STRUCTURE_WALL && structure.hits < 200000) || (structure.structureType == STRUCTURE_RAMPART && structure.hits < 500000)) &&
+                        return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD || (structure.structureType == STRUCTURE_WALL && structure.hits < 200000) || (structure.structureType == STRUCTURE_RAMPART && structure.hits < 1000000)) &&
                             structure.hits < structure.hitsMax;
                     }
             });
