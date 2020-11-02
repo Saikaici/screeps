@@ -201,6 +201,8 @@ var roleTransporter= {
                 {
                 collectionTarget = creep.pos.findClosestByPath(removalContainers, { filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck) }})
                 }
+                //Force collection Target to be storage on occassion
+                //collectionTarget = creep.room.storage;
                 //console.log(collectionTarget);
             }
             //Links need to be added eventually
@@ -221,7 +223,8 @@ var roleTransporter= {
                 }
             }
             else if(!collectionTarget){
-                //console.log('Nothing to collect in ' + creep.room.name);
+                
+                console.log('Nothing to collect in ' + creep.room.name);
             }
         }
 
