@@ -224,7 +224,7 @@ var roleTransporter= {
             }
             else if(!collectionTarget){
                 
-                console.log('Nothing to collect in ' + creep.room.name);
+                //console.log('Nothing to collect in ' + creep.room.name);
             }
         }
 

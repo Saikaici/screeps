@@ -10,9 +10,22 @@ var roleTurret = require('role.turret');
 var roleRangedHarasser = require('role.RangedHarasser');
 var roleTowerSoaker = require('role.TowerSoaker');
 
+//Required for profiler
+const profiler = require('screeps-profiler');
 
+/*
+module.exports.loop = function() {
+  profiler.wrap(function() {
+    // Main.js logic should go here.
+  });
+}
+*/
+
+//Enables profiler
+profiler.enable();
 module.exports.loop = function () {
-
+    //Profiler function wrap
+    profiler.wrap(function() {
     //GLOBAL CONSTANTS
     const turretMemoryUpdateRate = 250;
     const buildSpawningListUpdateRate = 50;
@@ -225,7 +238,7 @@ module.exports.loop = function () {
     if(remoteBuildersR4.length < 1) {
         var newName = 'remoteBuilder' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'remoteBuilder', assignedRoom: 'E49N29'}});
     }
 
@@ -233,18 +246,18 @@ module.exports.loop = function () {
     if(remoteUpgradersR4.length < 3) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE49N29'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'remoteUpgrader', assignedRoom: 'E49N29'}});
     }
-    /*
+    
     var transportersE49N29 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E49N29')));
-    if(transportersE49N29.length < 0) {
+    if(transportersE49N29.length < 2) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE49N29'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'transporter', transporting: false, assignedRoom: 'E49N29'}});
     }
-    */
+    
 
     // Room 3 units (E47N26) units
     var remoteBuildersR3 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteBuilder' && creep.memory.assignedRoom == 'E47N26');
@@ -283,7 +296,7 @@ module.exports.loop = function () {
     }
 
     var remoteUpgradersR2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N26');
-    if(remoteUpgradersR2.length < 4) {
+    if(remoteUpgradersR2.length < 3) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
         Game.spawns['SpawnE48N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
@@ -357,7 +370,7 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length < 2) {
+    if(upgraders.length < 3) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -752,6 +765,10 @@ module.exports.loop = function () {
     {
         Game.cpu.generatePixel()
     }
+
+     //Line for screeps profiler
+    });
+    
 }
 
 // Console Commands
