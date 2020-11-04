@@ -10,10 +10,11 @@ var roleRemoteUpgrader = {
 		// Initialize memory.rooms if it doesn't exist
 		const assignedRoom = creep.memory.assignedRoom;
 
+		/*
 		if(!Memory.rooms){
 			Memory.rooms = {};
 		}
-
+		*/
 
 		// State information
 		if(creep.memory.upgrading && creep.store[RESOURCE_ENERGY] == 0) {

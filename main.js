@@ -203,7 +203,7 @@ module.exports.loop = function () {
         } 
         catch (error) 
         {
-                console.log(error + ' - unit spawner code is broke yes, yes')
+                console.log(error + ' - unit spawner code from memory is broke yes, yes')
                 console.log(error.stack);
         }
 
@@ -251,7 +251,7 @@ module.exports.loop = function () {
     }
     
     var transportersE49N29 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E49N29')));
-    if(transportersE49N29.length < 2) {
+    if(transportersE49N29.length < 1) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['SpawnE49N29'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -354,7 +354,7 @@ module.exports.loop = function () {
     */
 
     // Room 0 (E47N27) units
-    if(builders.length < 1) {
+    if(builders.length < 3) {
         var newName = 'Builder' + Game.time;
         //console.log('Spawning new Builder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -370,10 +370,10 @@ module.exports.loop = function () {
     }
     //600
     //4200
-    if(upgraders.length < 3) {
+    if(upgraders.length < 2) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
-        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'upgrader'}});
     }
 

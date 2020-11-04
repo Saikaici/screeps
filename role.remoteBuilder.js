@@ -238,7 +238,7 @@ var roleRemoteBuilder = {
                 }
 			}
 			else {
-				var closestNode = creep.pos.findClosestByPath(FIND_SOURCES, {filter: (node) => { return node.energy>0}}, Memory.rooms[assignedRoom].sourceNodes);
+				var closestNode = creep.pos.findClosestByPath(FIND_SOURCES, {filter: (node) => { return node.energy > 0}}, Memory.rooms[assignedRoom].sourceNodes);
             	if(creep.harvest(closestNode) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(closestNode, {visualizePathStyle: {stroke: '#ffaa00'}});
 				}

@@ -1,4 +1,4 @@
-var roleTransporter= {
+var roleManager= {
 
     // Creep job is to distribute from containers ONLY to spawn, extenders, and other containers. 
 
