@@ -9,6 +9,8 @@ var roleRemoteUpgrader = require('role.remoteUpgrader');
 var roleTurret = require('role.turret');
 var roleRangedHarasser = require('role.RangedHarasser');
 var roleTowerSoaker = require('role.TowerSoaker');
+var MemoryMgr = require('MemoryMgr');
+var RoomMgr = require('RoomMgr');
 
 //Required for profiler
 const profiler = require('screeps-profiler');
@@ -30,6 +32,7 @@ module.exports.loop = function () {
     const turretMemoryUpdateRate = 250;
     const buildSpawningListUpdateRate = 50;
     const spawnerMemoryUpdateRate = 100;
+    const linkMemoryUpdateRate = 150;
 
 
     //Flags to force Memory Updates
@@ -84,7 +87,7 @@ module.exports.loop = function () {
     
     var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
 
-    var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+    var upgraders = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'upgrader') && (creep.memory.assignedRoom == 'E47N27')));
 
     var maintainers = _.filter(Game.creeps, (creep) => creep.memory.role == 'maintainer');
 
@@ -238,23 +241,23 @@ module.exports.loop = function () {
     if(remoteBuildersR4.length < 1) {
         var newName = 'remoteBuilder' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE49N29'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'remoteBuilder', assignedRoom: 'E49N29'}});
     }
 
-    var remoteUpgradersR4 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E49N29');
-    if(remoteUpgradersR4.length < 3) {
-        var newName = 'remoteUpgrader' + Game.time;
+    var upgradersR4 = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.assignedRoom == 'E49N29');
+    if(upgradersR4.length < 5) {
+        var newName = 'upgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE49N29'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
-            {memory: {role: 'remoteUpgrader', assignedRoom: 'E49N29'}});
+        Game.spawns['SpawnE49N29'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
+            {memory: {role: 'upgrader', assignedRoom: 'E49N29'}});
     }
     
     var transportersE49N29 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E49N29')));
     if(transportersE49N29.length < 1) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
-        Game.spawns['SpawnE49N29'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE49N29'].spawnCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'transporter', transporting: false, assignedRoom: 'E49N29'}});
     }
     
@@ -278,10 +281,10 @@ module.exports.loop = function () {
 
     var transportersE47N26 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E47N26')));
     //console.log(transportersE47N26);
-    if(transportersE47N26.length < 4) {
+    if(transportersE47N26.length < 2) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
-        Game.spawns['SpawnE47N26'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE47N26'].spawnCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'transporter', transporting: false, assignedRoom: 'E47N26'}});
     }
 
@@ -327,7 +330,7 @@ module.exports.loop = function () {
     if(remoteUpgraders.length < 2) {
         var newName = 'remoteUpgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N27'}});
     }
 
@@ -354,7 +357,7 @@ module.exports.loop = function () {
     */
 
     // Room 0 (E47N27) units
-    if(builders.length < 3) {
+    if(builders.length < 0) {
         var newName = 'Builder' + Game.time;
         //console.log('Spawning new Builder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -368,13 +371,11 @@ module.exports.loop = function () {
             {memory: {role: 'maintainer'}},
             {memory: {repairing: false}});
     }
-    //600
-    //4200
     if(upgraders.length < 2) {
         var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], newName, 
-            {memory: {role: 'upgrader'}});
+            {memory: {role: 'upgrader' , assignedRoom: 'E47N27'}});
     }
 
     //decide if Alpha transporter present, if not create one
@@ -579,7 +580,88 @@ module.exports.loop = function () {
 
     //transferEnergy(target, [amount])
 
+    //Testing to operate a link
+    RoomMgr.operateLinks('E47N27');
+    RoomMgr.operateLinks('E49N29');
+    //RoomMgr.operateLinks({'E47N27', Game});
 
+    /*
+    var room = 'E47N27';
+    //Spawning code test
+    try {
+        //console.log(Memory.rooms[room].links);
+        var links = Memory.rooms[room].links;
+        //console.log(links.length);
+        var senders = [];
+        var both = [];
+        var receivers = [];
+        var sendToRecieverThreshold = 200;
+        //(receiver, sender, both, none)
+        // Categorize the links
+
+        for(let link of links)
+        {
+            console.log(link.id);
+            if(link.linkType == 'senders')
+            {
+                console.log(Game.getObjectByID(link.id));
+                senders.push(Game.getObjectByID(link.id));
+                console.log('senders: ' + Game.getObjectByID(link.id));
+            }
+            else if(link.linkType == 'both')
+            {
+                console.log(Game.getObjectByID(link.id));
+                both.push(Game.getObjectByID(link.id));
+            }
+            else if(link.linkType == 'receiver')
+            {
+                console.log('receivers: ' +Game.getObjectByID(link.id));
+                receivers.push(Game.getObjectByID(link.id));
+            }
+        }
+
+        for(const sender of senders)
+        {
+            var target;
+            //If the sender can't send, then don't bother with anything else
+            if(sender.cooldown == 0 && sender.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+            {
+                for(const receiver of receivers)
+                {
+                    if(receiver.store.getFreeCapacity(RESOURCE_ENERGY) > sendToRecieverThreshold)
+                    {
+                        target = receiver;
+                    }
+                }
+                if(target == undefined)
+                {
+                    for(const bothLink of both)
+                    {
+                        if(bothLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+                        {
+                            target = bothLink;
+                        }
+                    }
+                }
+            }
+            console.log(target);
+            if(target)
+            {
+                sender.transferEnergy(target);
+            }
+
+        }
+
+
+    } catch (error) {
+        console.log('RoomMgr.operateLinks code is failing. Error:' + error.stack)
+    }
+    */
+
+    //Old code for links
+    /*
+    if(true)
+    {
     // Make link transfer between links
     const linkFrom = Game.rooms['E47N27'].lookForAt('structure', 35, 42)[1];
     //console.log(linkFrom);
@@ -587,6 +669,8 @@ module.exports.loop = function () {
         {filter: {structureType: STRUCTURE_LINK}})[1];
     //console.log(linkTo);
     linkFrom.transferEnergy(linkTo);
+    }
+    */
 
     //console.log(linkTo.structureType);
 
@@ -729,6 +813,10 @@ module.exports.loop = function () {
         */
     }
 
+    if((Game.time % linkMemoryUpdateRate) == 0)
+    {
+        MemoryMgr.updateLinks();
+    }
 
     //Update turret IDs into memory.
     if(((Game.time % turretMemoryUpdateRate) == 0) || (Memory.turrets == undefined)) 
