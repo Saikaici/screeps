@@ -10,13 +10,14 @@ var roleHarvester = {
         //console.log(assignedNode);
 
         //A game ID of the link that the harvester gets assigned to.
-        var depositLink;
+        
         
         
         //If the harvester is proximate to a link, it needs to prioritize that first.
         //Set up a variable that changes how the harvester acts
         if(creep.memory.nodeNextToLink == undefined)
         {
+            var depositLink;
             //creates a piece of memory that will be checked in deposit targets
             //creep.memory.nodeNextToLink = false;
             //console.log(creep.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}}));
@@ -24,10 +25,9 @@ var roleHarvester = {
                 //console.log(link);
                 if(assignedNode.pos.inRangeTo(link.pos, 1))
                 {
-                    depositLink = link.id;
-                    creep.Memory.creepNextToLink = true;
+                    creep.memory.depositLink = link.id;
+                    creep.memory.creepNextToLink = true;
                 }
-            
             }
         }
         
@@ -55,7 +55,7 @@ var roleHarvester = {
             //If next to a link, deposit into it. Always. It's not moving. It'll waste way too much time moving to other storage if it has a link.
             if(creep.memory.nodeNextToLink)
             {
-                deliveryTarget = Game.getObjectById(depositLink);
+                deliveryTarget = Game.getObjectById(creep.memory.depositLink);
             }
 
             //Finds nearest container or storage. Delivers to it.
