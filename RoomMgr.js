@@ -17,9 +17,9 @@ var RoomMgr = {
             for(let link of links)
             {
                 //console.log(link.linkType);
-                if(link.linkType == 'senders')
+                if(link.linkType == 'sender')
                 {
-                    //console.log('senders: ' + Game.getObjectById(link.id));
+                    //console.log('senders count: ' + Game.getObjectById(link.id));
                     senders.push(Game.getObjectById(link.id));
                 }
                 else if(link.linkType == 'both')
@@ -60,10 +60,10 @@ var RoomMgr = {
                         }
                     }
                 }
-                console.log(target);
+                //console.log(target);
                 if(target)
                 {
-
+                    //console.log('sender link sending to: ' + target);
                     sender.transferEnergy(target);
                 }
             }
@@ -76,7 +76,8 @@ var RoomMgr = {
                 {
                     for(const receiver of receivers)
                     {
-                        if(bothLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+                        //if(bothLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
+                        if(receiver.store.getFreeCapacity(RESOURCE_ENERGY) > 0)
                         {
                             target = receiver;
                         }

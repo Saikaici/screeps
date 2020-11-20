@@ -214,22 +214,24 @@ module.exports.loop = function () {
 
     //Temporary Ranged Harrasers
 
-    //if(Game.time % 50 == 0)
-    //{
+    if(Game.time % 50 == 0)
+    {
         /*
         Game.spawns['Spawn1'].spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,MOVE], 'yee boi', 
             {memory: {role: 'RangedHarasser', assignedRoom: 'E48N29'}});
 
         Game.spawns['Spawn1'].spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,MOVE], 'yee boi2', 
             {memory: {role: 'RangedHarasser', assignedRoom: 'E49N28'}});
-
-        Game.spawns['Spawn1'].spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL], 'beefy boi', 
-            {memory: {role: 'TowerSoaker', soakRoom: 'E49N29', safeRoom: 'E48N29'}});
-
-        Game.spawns['Spawn1'].spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,MOVE], 'yee boi3', 
-            {memory: {role: 'RangedHarasser', assignedRoom: 'E48N29'}});
         */
-    //}
+        //Game.spawns['Spawn1'].spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL], 'beefy boi', 
+        //    {memory: {role: 'TowerSoaker', soakRoom: 'E46N28', safeRoom: 'E46N27'}});
+        
+            
+        //Game.spawns['Spawn1'].spawnCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,RANGED_ATTACK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,MOVE], 'yee boi3', 
+        //    {memory: {role: 'RangedHarasser', assignedRoom: 'E46N28'}});
+            
+        
+    }
     
 
 
@@ -246,10 +248,10 @@ module.exports.loop = function () {
     }
 
     var upgradersR4 = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.assignedRoom == 'E49N29');
-    if(upgradersR4.length < 5) {
+    if(upgradersR4.length < 2) {
         var newName = 'upgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE49N29'].spawnCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE49N29'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'upgrader', assignedRoom: 'E49N29'}});
     }
     
@@ -271,12 +273,12 @@ module.exports.loop = function () {
             {memory: {role: 'remoteBuilder', assignedRoom: 'E47N26'}});
     }
 
-    var remoteUpgradersR3 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E47N26');
-    if(remoteUpgradersR3.length < 3) {
-        var newName = 'remoteUpgrader' + Game.time;
-        //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE47N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
-            {memory: {role: 'remoteUpgrader', assignedRoom: 'E47N26'}});
+    var upgradersR3 = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.assignedRoom == 'E47N26');
+    if(upgradersR3.length < 2) {
+        var newName = 'upgrader' + Game.time;
+        //console.log('Spawning new upgrader: ' + newName);
+        Game.spawns['SpawnE47N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+            {memory: {role: 'upgrader', assignedRoom: 'E47N26'}});
     }
 
     var transportersE47N26 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E47N26')));
@@ -294,24 +296,24 @@ module.exports.loop = function () {
     if(remoteBuildersR2.length < 1) {
         var newName = 'remoteBuilder' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE48N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'remoteBuilder', assignedRoom: 'E48N26'}});
     }
 
-    var remoteUpgradersR2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N26');
-    if(remoteUpgradersR2.length < 3) {
-        var newName = 'remoteUpgrader' + Game.time;
+    var upgradersR2 = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.assignedRoom == 'E48N26');
+    if(upgradersR2.length < 2) {
+        var newName = 'Upgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE48N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], newName, 
-            {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N26'}});
+        Game.spawns['SpawnE48N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE], newName, 
+            {memory: {role: 'upgrader', assignedRoom: 'E48N26'}});
     }
 
     var transportersE48N26 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E48N26')));
     //console.log(transportersE48N26);
-    if(transportersE48N26.length < 3) {
+    if(transportersE48N26.length < 1) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
-        Game.spawns['SpawnE48N27'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE48N26'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
             {memory: {role: 'transporter', transporting: false, assignedRoom: 'E48N26'}});
     }
 
@@ -364,7 +366,7 @@ module.exports.loop = function () {
             {memory: {role: 'builder'}});
     }
     
-    if(maintainers.length < 1) {
+    if(maintainers.length < 0) {
         var newName = 'Maintainer' + Game.time;
         //console.log('Spawning new maintaner: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -583,6 +585,7 @@ module.exports.loop = function () {
     //Testing to operate a link
     RoomMgr.operateLinks('E47N27');
     RoomMgr.operateLinks('E49N29');
+    RoomMgr.operateLinks('E48N26');
     //RoomMgr.operateLinks({'E47N27', Game});
 
     /*
@@ -813,8 +816,9 @@ module.exports.loop = function () {
         */
     }
 
-    if((Game.time % linkMemoryUpdateRate) == 0)
+    if(((Game.time % linkMemoryUpdateRate) == 0) || false)
     {
+        console.log('Updating Links in Memory');
         MemoryMgr.updateLinks();
     }
 

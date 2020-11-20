@@ -15,18 +15,29 @@ var roleHarvester = {
         
         //If the harvester is proximate to a link, it needs to prioritize that first.
         //Set up a variable that changes how the harvester acts
-        if(creep.memory.nodeNextToLink == undefined)
+        if(creep.memory.depositIntoLink == undefined)
         {
-            var depositLink;
+            //var depositLink;
             //creates a piece of memory that will be checked in deposit targets
-            //creep.memory.nodeNextToLink = false;
+            var storageType = false;
             //console.log(creep.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}}));
             for(var link of creep.room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}})) {
                 //console.log(link);
-                if(assignedNode.pos.inRangeTo(link.pos, 1))
+                
+                //If there is a nearby storage, the harvester needs to deposit into it. Otherwise, it will deposit into the link.
+                if(creep.room.storage)
+                {
+                    //Check if the storage is in range to the assigned node of the harvester
+                    if(creep.room.storage.pos.inRangeTo(assignedNode.pos, 2))
+                    {
+                        storageType = true;
+                    }
+                }
+
+                if(assignedNode.pos.inRangeTo(link.pos, 2) && (storageType == false))
                 {
                     creep.memory.depositLink = link.id;
-                    creep.memory.creepNextToLink = true;
+                    creep.memory.depositIntoLink = true;
                 }
             }
         }
@@ -53,9 +64,10 @@ var roleHarvester = {
         {
             var deliveryTarget;
             //If next to a link, deposit into it. Always. It's not moving. It'll waste way too much time moving to other storage if it has a link.
-            if(creep.memory.nodeNextToLink)
+            if(creep.memory.depositIntoLink)
             {
                 deliveryTarget = Game.getObjectById(creep.memory.depositLink);
+                console.log('depositLink:' + deliveryTarget);
             }
 
             //Finds nearest container or storage. Delivers to it.

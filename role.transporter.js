@@ -74,7 +74,7 @@ var roleTransporter= {
 
             //Prioritize delivering to spawn/extensions
             var deliveryTarget = undefined;
-            var creepMaxEnergy = creep.store.getCapacity;
+            //var creepMaxEnergy = creep.store.getCapacity;
             var tempTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
                 return (((structure.structureType == STRUCTURE_SPAWN) || (structure.structureType == STRUCTURE_EXTENSION)) &&
@@ -99,6 +99,8 @@ var roleTransporter= {
                 //{ filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }}
                 //console.log(' tower' +deliveryTarget);
             }
+            //Code commented out because transporters never need to deliver to links
+            /*
             if(!deliveryTarget) {
                 //console.log('2nd delivery target checkpoint, links' + deliveryTarget);
 
@@ -111,6 +113,7 @@ var roleTransporter= {
                 //{ filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCES_ALL) > 50) }}
                 //console.log(' link' +deliveryTarget);
             }
+            */
             //Deliver to room's terminal if no nodes available.
             if(!deliveryTarget) {
                 //console.log('2nd delivery target checkpoint, links' + deliveryTarget);
@@ -180,8 +183,16 @@ var roleTransporter= {
             //{
                 //collectionTarget = creep.pos.findClosestByPath(FIND_TOMBSTONES, tombstones);
             //}
-            //Collect from removal containers
             
+            //If the room's available storage for creeps is empty, then it needs to use storage directly to fill the extensions and spawn
+            if((collectionTarget == undefined && creep.room.storage != undefined))
+            {
+                if((creep.room.energyAvailable/creep.room.energyCapacityAvailable) < .75)
+                {
+                    collectionTarget = creep.room.storage;
+                }
+            }
+            //Collect from removal containers
             if(collectionTarget == undefined)
             {   
                 var removalContainers = [];
@@ -198,21 +209,27 @@ var roleTransporter= {
                 }
                 */
                 
-                {
+                
                 collectionTarget = creep.pos.findClosestByPath(removalContainers, { filter: (structure) => { return (structure.store.getUsedCapacity(RESOURCE_ENERGY) > maxEnergyCheck) }})
-                }
+                
                 //Force collection Target to be storage on occassion
                 //collectionTarget = creep.room.storage;
                 //console.log(collectionTarget);
             }
             //Links need to be added eventually
-            /*
+            
             if(collectionTarget == undefined)
             {   
-                //Find a removal container to pull energy from
-                collectionTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => { return ((structure.structureType == STRUCTURE_LINK) && (structure.store.getUsedCapacity(RESOURCE_ENERGY))) }})
+                for (const link of Memory.rooms[creep.room.name].links) 
+                {
+                    //console.log(link);
+                    if(link.linkType == 'both' && (Game.getObjectById(link.id).store.getUsedCapacity(RESOURCE_ENERGY) > 400))
+                    {
+                        collectionTarget = Game.getObjectById(link.id);
+                    }
+                }
             }
-            */
+            
             //console.log(collectionTarget);
             //Go collect the collectionTarget
 

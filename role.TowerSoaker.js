@@ -51,7 +51,7 @@ var roleTowerSoaker = {
 		}
 		else if((creep.hits/creep.hitsMax) == 1 )
 		{
-			creep.moveTo(new RoomPosition(2,19,creep.memory.soakRoom), {reusePath: 0});
+			creep.moveTo(new RoomPosition(28,48,creep.memory.soakRoom), {reusePath: 0});
 		}
 
 
