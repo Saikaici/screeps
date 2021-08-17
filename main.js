@@ -35,7 +35,7 @@ module.exports.loop = function () {
     const buildSpawningListUpdateRate = 50;
     const spawnerMemoryUpdateRate = 100;
     const linkMemoryUpdateRate = 150;
-    const marketUpdateRate = 100;
+    const marketUpdateRate = 250;
 
 
     //Flags to force Memory Updates
@@ -884,8 +884,8 @@ module.exports.loop = function () {
 
     if(((Game.time % marketUpdateRate) == 0) || false)
     {
-        //console.log('Updating Links in Memory');
-        //MemoryMgr.updateLinks();
+        console.log('Running Market Management');
+        //MarketMgr.update();
     }
 
     //Update turret IDs into memory.
