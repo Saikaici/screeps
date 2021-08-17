@@ -10,7 +10,7 @@ var RoomMgr = {
             var senders = [];
             var both = [];
             var receivers = [];
-            var sendToReceiverThreshold = 200;
+            var sendToReceiverThreshold = 300;
             //(receiver, sender, both, none)
             // Categorize the links
 
@@ -85,7 +85,7 @@ var RoomMgr = {
                 }
                 if(target)
                 {
-                    console.log('both link sending to: ' + target);
+                    //console.log('both link sending to: ' + target);
                     bothLink.transferEnergy(target);
                 }
             }

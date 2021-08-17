@@ -6,11 +6,13 @@ var roleTransporter = require('role.transporter');
 var roleRemoteBuilder = require('role.remoteBuilder');
 var roleRemoteClaimer = require('role.remoteClaimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
+var rolePanicCreep = require('role.PanicCreep');
 var roleTurret = require('role.turret');
 var roleRangedHarasser = require('role.RangedHarasser');
 var roleTowerSoaker = require('role.TowerSoaker');
 var MemoryMgr = require('MemoryMgr');
 var RoomMgr = require('RoomMgr');
+var MarketMgr = require('MarketMgr');
 
 //Required for profiler
 const profiler = require('screeps-profiler');
@@ -33,6 +35,7 @@ module.exports.loop = function () {
     const buildSpawningListUpdateRate = 50;
     const spawnerMemoryUpdateRate = 100;
     const linkMemoryUpdateRate = 150;
+    const marketUpdateRate = 100;
 
 
     //Flags to force Memory Updates
@@ -236,6 +239,8 @@ module.exports.loop = function () {
 
 
 
+
+
     //Spawning count control code
 
     // Room 4 units (E49N29) units
@@ -277,13 +282,13 @@ module.exports.loop = function () {
     if(upgradersR3.length < 2) {
         var newName = 'upgrader' + Game.time;
         //console.log('Spawning new upgrader: ' + newName);
-        Game.spawns['SpawnE47N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+        Game.spawns['SpawnE47N26'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
             {memory: {role: 'upgrader', assignedRoom: 'E47N26'}});
     }
 
     var transportersE47N26 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E47N26')));
     //console.log(transportersE47N26);
-    if(transportersE47N26.length < 2) {
+    if(transportersE47N26.length < 1) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['SpawnE47N26'].spawnCreep([CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], newName, 
@@ -320,7 +325,7 @@ module.exports.loop = function () {
     // Room 1 (E48N27) units
     
     var remoteBuilders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteBuilder' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteBuilders.length < 1) {
+    if(remoteBuilders.length < 0) {
         var newName = 'remoteBuilder' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
         Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -328,18 +333,18 @@ module.exports.loop = function () {
     }
 
     
-    var remoteUpgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'remoteUpgrader' && creep.memory.assignedRoom == 'E48N27');
-    if(remoteUpgraders.length < 2) {
-        var newName = 'remoteUpgrader' + Game.time;
+    var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader' && creep.memory.assignedRoom == 'E48N27');
+    if(upgraders.length < 2) {
+        var newName = 'upgrader' + Game.time;
         //console.log('Spawning new remoteBuilder: ' + newName);
-        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], newName, 
-            {memory: {role: 'remoteUpgrader', assignedRoom: 'E48N27'}});
+        Game.spawns['SpawnE48N27'].spawnCreep([WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE], newName, 
+            {memory: {role: 'upgrader', assignedRoom: 'E48N27'}});
     }
 
     
     var transportersE48N27 = _.filter(Game.creeps, (creep) => ((creep.memory.role == 'transporter') && (creep.memory.assignedRoom == 'E48N27')));
     //console.log(transportersE48N27);
-    if(transportersE48N27.length < 2) {
+    if(transportersE48N27.length < 1) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['SpawnE48N27'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -359,7 +364,7 @@ module.exports.loop = function () {
     */
 
     // Room 0 (E47N27) units
-    if(builders.length < 0) {
+    if(builders.length < 1) {
         var newName = 'Builder' + Game.time;
         //console.log('Spawning new Builder: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -399,7 +404,7 @@ module.exports.loop = function () {
     
 
 
-    if(transporters.length < 2) {
+    if(transporters.length < 1) {
         var newName = 'Transporter' + Game.time;
         //console.log('Spawning new transporter: ' + newName);
         Game.spawns['Spawn1'].spawnCreep([CARRY,CARRY,CARRY,CARRY,MOVE,MOVE], newName, 
@@ -586,7 +591,51 @@ module.exports.loop = function () {
     RoomMgr.operateLinks('E47N27');
     RoomMgr.operateLinks('E49N29');
     RoomMgr.operateLinks('E48N26');
+    RoomMgr.operateLinks('E47N26');
+    RoomMgr.operateLinks('E48N27');
     //RoomMgr.operateLinks({'E47N27', Game});
+
+    //PANIC creep spawn code
+    
+    var tempPanicRooms = Array.from(Object.keys(Memory.rooms))
+
+    for (const panicRoom of tempPanicRooms) {
+        //console.log(panicRoom)
+        
+        //var tempCreep;
+        //var tempSpawn;
+        if(Game.rooms[panicRoom].find(FIND_MY_CREEPS).length < 3)
+        {
+            //console.log(Game.rooms[panicRoom].find(FIND_MY_CREEPS));
+            console.log('No creeps in '+ panicRoom +' spawning PANIC CREEP');
+            
+            var newName = 'panic' + Game.time;
+            Game.rooms[panicRoom].find(FIND_MY_SPAWNS)[0].spawnCreep([WORK,WORK,CARRY,MOVE], newName, 
+                {memory: {role: 'panicCreep' }})
+            
+            
+        }
+    }
+    
+    
+    /*
+    Game.rooms.forEach(room => {
+
+        if(room.find(FIND_MY_CREEPS).length == 0)
+        {
+            var newName = 'panic' + Game.time;
+            room.find(FIND_MY_SPAWNS)[0].spawnCreep([WORK,WORK,CARRY,MOVE], newName, 
+                {memory: {role: 'panicCreep' }})
+        }
+        
+    });
+    */
+    
+
+//Game.spawns[roomSpawn.name].spawnCreep([WORK,WORK,CARRY,MOVE], newName, 
+//{memory: {role: 'harvester', assignedNodeID: tempNode.id, assignedRoomID: tempNode.room}})
+
+
 
     /*
     var room = 'E47N27';
@@ -683,6 +732,17 @@ module.exports.loop = function () {
         if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
+
+        // PANIC Creep execution code
+        try {
+            if(creep.memory.role == 'panicCreep') {
+                rolePanicCreep.run(creep);
+            }
+        } catch (error) {
+            console.log('panicCreep had an error:' + error);
+        }
+
+
         try {
             if(creep.memory.role == 'transporter') {
                 roleTransporter.run(creep, removalContainers, depositContainers);
@@ -820,6 +880,12 @@ module.exports.loop = function () {
     {
         console.log('Updating Links in Memory');
         MemoryMgr.updateLinks();
+    }
+
+    if(((Game.time % marketUpdateRate) == 0) || false)
+    {
+        //console.log('Updating Links in Memory');
+        //MemoryMgr.updateLinks();
     }
 
     //Update turret IDs into memory.
